@@ -61,6 +61,11 @@ type Configuration struct {
 
 	AuthMode string `json:"authMode" mapstructure:"authMode"`
 
+	// Keycloak SSO Configuration
+	KeycloakBaseURL  string `json:"keycloakBaseUrl" mapstructure:"keycloakBaseUrl"`
+	KeycloakRealm    string `json:"keycloakRealm" mapstructure:"keycloakRealm"`
+	KeycloakClientID string `json:"keycloakClientId" mapstructure:"keycloakClientId"`
+
 	LoggingCfgFile string `json:"logging_cfg_file" mapstructure:"logging_cfg_file"`
 	LoggingCfgJSON string `json:"logging_cfg_json" mapstructure:"logging_cfg_json"`
 
@@ -101,6 +106,12 @@ func ReadConfigFile(configFilePath string) (*Configuration, error) {
 	viper.SetDefault("LocalModeSocketLocation", "/var/tmp/focalboard_local.socket")
 	viper.SetDefault("EnablePublicSharedBoards", false)
 	viper.SetDefault("AuthMode", "native")
+
+	// Keycloak defaults
+	viper.SetDefault("KeycloakBaseUrl", "")
+	viper.SetDefault("KeycloakRealm", "")
+	viper.SetDefault("KeycloakClientId", "")
+
 	viper.SetDefault("NotifyFreqCardSeconds", 120)    // 2 minutes after last card edit
 	viper.SetDefault("NotifyFreqBoardSeconds", 86400) // 1 day after last card edit
 	viper.SetDefault("EnableDataRetention", false)

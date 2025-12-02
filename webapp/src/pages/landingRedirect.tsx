@@ -12,8 +12,9 @@ const LandingRedirect = (): JSX.Element | null => {
 
     useEffect(() => {
         if (loggedIn === true) {
-            // User is logged in, redirect to dashboard
-            history.replace('/team/0')
+            // User is logged in, redirect to their team dashboard
+            const teamId = localStorage.getItem('focalboardTeamId') || '0'
+            history.replace(`/team/${teamId}`)
         } else if (loggedIn === false) {
             // User is not logged in, show landing page
             window.location.href = '/static/landing/index.html'

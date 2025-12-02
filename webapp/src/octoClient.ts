@@ -99,6 +99,49 @@ class OctoClient {
         return true
     }
 
+    /**
+     * Login using Keycloak JWT token
+     * @param keycloakToken The JWT token from Keycloak
+     * @returns Object containing session token and user data, or null if login failed
+     */
+    async keycloakLogin(keycloakToken: string): Promise<{token: string, user: IUser, teamId: string} | null> {
+        // Clear any existing session token before Keycloak login
+        localStorage.removeItem('focalboardSessionId')
+        
+        const path = '/api/v2/auth/keycloak-token-login'
+        const response = await fetch(this.getBaseURL() + path, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + keycloakToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+
+        if (response.status !== 200) {
+            const errorJson = await this.getJson(response, {}) as {error?: string}
+            Utils.log(`Keycloak login failed: ${response.status} - ${errorJson.error || 'Unknown error'}`)
+            return null
+        }
+
+        const responseJson = (await this.getJson(response, {})) as {token?: string, user?: IUser, teamId?: string}
+        if (responseJson.token && responseJson.user) {
+            // Store the new session token
+            localStorage.setItem('focalboardSessionId', responseJson.token)
+            if (responseJson.teamId) {
+                localStorage.setItem('focalboardTeamId', responseJson.teamId)
+            }
+            return {
+                token: responseJson.token,
+                user: responseJson.user,
+                teamId: responseJson.teamId || '',
+            }
+        }
+
+        return null
+    }
+
     async getClientConfig(): Promise<ClientConfig | null> {
         const path = '/api/v2/clientConfig'
         const response = await fetch(this.getBaseURL() + path, {

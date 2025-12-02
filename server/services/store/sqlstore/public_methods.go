@@ -574,7 +574,12 @@ func (s *SQLStore) GetUserByID(userID string) (*model.User, error) {
 }
 
 func (s *SQLStore) GetUserByUsername(username string) (*model.User, error) {
-        return s.getUserByUsername(s.db, username)
+	return s.getUserByUsername(s.db, username)
+
+}
+
+func (s *SQLStore) GetUserByKeycloakSubID(keycloakSubID string) (*model.User, error) {
+	return s.getUserByKeycloakSubID(s.db, keycloakSubID)
 
 }
 

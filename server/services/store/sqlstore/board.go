@@ -87,6 +87,9 @@ func (s *SQLStore) boardsFromRows(rows *sql.Rows) ([]*model.Board, error) {
 		var board model.Board
 		var propertiesBytes []byte
 		var cardPropertiesBytes []byte
+		var title sql.NullString
+		var description sql.NullString
+		var icon sql.NullString
 
 		err := rows.Scan(
 			&board.ID,
@@ -96,9 +99,9 @@ func (s *SQLStore) boardsFromRows(rows *sql.Rows) ([]*model.Board, error) {
 			&board.ModifiedBy,
 			&board.Type,
 			&board.MinimumRole,
-			&board.Title,
-			&board.Description,
-			&board.Icon,
+			&title,
+			&description,
+			&icon,
 			&board.ShowDescription,
 			&board.IsTemplate,
 			&board.TemplateVersion,
@@ -111,6 +114,16 @@ func (s *SQLStore) boardsFromRows(rows *sql.Rows) ([]*model.Board, error) {
 		if err != nil {
 			s.logger.Error("boardsFromRows scan error", mlog.Err(err))
 			return nil, err
+		}
+
+		if title.Valid {
+			board.Title = title.String
+		}
+		if description.Valid {
+			board.Description = description.String
+		}
+		if icon.Valid {
+			board.Icon = icon.String
 		}
 
 		err = json.Unmarshal(propertiesBytes, &board.Properties)

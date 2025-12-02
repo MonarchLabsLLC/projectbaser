@@ -46,6 +46,10 @@ type User struct {
 	// swagger:ignore
 	AuthData string `json:"-"`
 
+	// Keycloak Subject ID for SSO authentication
+	// swagger:ignore
+	KeycloakSubID string `json:"-"`
+
 	// Created time in miliseconds since the current epoch
 	// required: true
 	CreateAt int64 `json:"create_at,omitempty"`

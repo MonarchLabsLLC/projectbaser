@@ -18,6 +18,8 @@ import ModalWrapper from '../modalWrapper'
 
 import {IAppWindow} from '../../types'
 
+import {keycloakLogout} from '../../services/keycloak'
+
 import RegistrationLink from './registrationLink'
 
 import './sidebarUserMenu.scss'
@@ -30,6 +32,17 @@ const SidebarUserMenu = () => {
     const [showRegistrationLinkDialog, setShowRegistrationLinkDialog] = useState(false)
     const user = useAppSelector<IUser|null>(getMe)
     const intl = useIntl()
+
+    const handleLogout = () => {
+        // Clear Redux state
+        dispatch(setMe(null))
+
+        // Clear local storage session
+        localStorage.removeItem('focalboardSessionId')
+
+        // Redirect to ScalePlus logout
+        keycloakLogout()
+    }
 
     return (
         <div className='SidebarUserMenu'>
@@ -47,18 +60,7 @@ const SidebarUserMenu = () => {
                             <Menu.Text
                                 id='logout'
                                 name={intl.formatMessage({id: 'Sidebar.logout', defaultMessage: 'Log out'})}
-                                onClick={async () => {
-                                    await octoClient.logout()
-                                    dispatch(setMe(null))
-                                    history.push('/login')
-                                }}
-                            />
-                            <Menu.Text
-                                id='changePassword'
-                                name={intl.formatMessage({id: 'Sidebar.changePassword', defaultMessage: 'Change password'})}
-                                onClick={async () => {
-                                    history.push('/change_password')
-                                }}
+                                onClick={handleLogout}
                             />
                             <Menu.Text
                                 id='invite'

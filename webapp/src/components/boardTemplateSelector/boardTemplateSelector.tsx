@@ -47,8 +47,11 @@ const BoardTemplateSelector = (props: Props) => {
     const dispatch = useAppDispatch()
     const intl = useIntl()
     const history = useHistory()
-    const match = useRouteMatch<{boardId: string, viewId?: string}>()
+    const match = useRouteMatch<{teamId?: string, boardId: string, viewId?: string}>()
     const me = useAppSelector<IUser|null>(getMe)
+    
+    // Get team ID from route, Redux store, or octoClient (in that priority order)
+    const teamId = match.params.teamId || currentTeam?.id || octoClient.teamId
 
     useHotkeys('esc', () => props.onClose?.())
 
@@ -103,15 +106,31 @@ const BoardTemplateSelector = (props: Props) => {
     }
 
     const handleUseTemplate = async () => {
+        if (!activeTemplate) {
+            console.error('No template selected')
+            return
+        }
+
+        if (!teamId || teamId === Constants.globalTeamId) {
+            console.error('No valid team ID available')
+            return
+        }
+
         if (activeTemplate.teamId === '0') {
             TelemetryClient.trackEvent(TelemetryCategory, TelemetryActions.CreateBoardViaTemplate, {boardTemplateId: activeTemplate.properties.trackingTemplateId as string, channelID: props.channelId})
         }
 
-        const boardsAndBlocks = await mutator.addBoardFromTemplate(currentTeam?.id || Constants.globalTeamId, intl, showBoard, () => showBoard(currentBoardId), activeTemplate.id, currentTeam?.id)
-        const board = boardsAndBlocks.boards[0]
-        await mutator.updateBoard({...board, channelId: props.channelId || ''}, board, 'linked channel')
-        if (activeTemplate.title === OnboardingBoardTitle) {
-            resetTour()
+        try {
+            const boardsAndBlocks = await mutator.addBoardFromTemplate(teamId, intl, showBoard, () => showBoard(currentBoardId), activeTemplate.id, teamId)
+            if (boardsAndBlocks && boardsAndBlocks.boards && boardsAndBlocks.boards.length > 0) {
+                const board = boardsAndBlocks.boards[0]
+                await mutator.updateBoard({...board, channelId: props.channelId || ''}, board, 'linked channel')
+                if (activeTemplate.title === OnboardingBoardTitle) {
+                    resetTour()
+                }
+            }
+        } catch (error) {
+            console.error('Failed to create board from template:', error)
         }
     }
 
@@ -170,7 +189,7 @@ const BoardTemplateSelector = (props: Props) => {
                                 size='medium'
                                 icon={<CompassIcon icon='plus'/>}
                                 className='new-template'
-                                onClick={() => mutator.addEmptyBoardTemplate(currentTeam?.id || '', intl, showBoard, () => showBoard(currentBoardId))}
+                                onClick={() => mutator.addEmptyBoardTemplate(teamId || '', intl, showBoard, () => showBoard(currentBoardId))}
                             >
                                 <FormattedMessage
                                     id='BoardTemplateSelector.add-template'
@@ -194,9 +213,15 @@ const BoardTemplateSelector = (props: Props) => {
                                 size={'medium'}
                                 icon={<CompassIcon icon='kanban'/>}
                                 onClick={async () => {
-                                    const boardsAndBlocks = await mutator.addEmptyBoard(currentTeam?.id || '', intl, showBoard, () => showBoard(currentBoardId))
-                                    const board = boardsAndBlocks.boards[0]
-                                    await mutator.updateBoard({...board, channelId: props.channelId || ''}, board, 'linked channel')
+                                    if (!teamId) {
+                                        console.error('No valid team ID available')
+                                        return
+                                    }
+                                    const boardsAndBlocks = await mutator.addEmptyBoard(teamId, intl, showBoard, () => showBoard(currentBoardId))
+                                    if (boardsAndBlocks && boardsAndBlocks.boards && boardsAndBlocks.boards.length > 0) {
+                                        const board = boardsAndBlocks.boards[0]
+                                        await mutator.updateBoard({...board, channelId: props.channelId || ''}, board, 'linked channel')
+                                    }
                                 }}
                             >
                                 <FormattedMessage

@@ -1,12 +1,18 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 const path = require('path');
+const webpack = require('webpack');
 
 const tsTransformer = require('@formatjs/ts-transformer');
 const CopyPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const outpath = path.resolve(__dirname, 'pack');
+
+// Keycloak configuration from environment variables
+const KEYCLOAK_BASE_URL = process.env.KEYCLOAK_BASE_URL || 'https://auth.groovetech.io/auth';
+const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || 'gd-apis-live';
+const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'app-projectbaser';
 
 function makeCommonConfig() {
     const commonConfig = {
@@ -85,6 +91,11 @@ function makeCommonConfig() {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
         plugins: [
+            new webpack.DefinePlugin({
+                'window.KEYCLOAK_BASE_URL': JSON.stringify(KEYCLOAK_BASE_URL),
+                'window.KEYCLOAK_REALM': JSON.stringify(KEYCLOAK_REALM),
+                'window.KEYCLOAK_CLIENT_ID': JSON.stringify(KEYCLOAK_CLIENT_ID),
+            }),
             new CopyPlugin({
                 patterns: [
                     {from: path.resolve(__dirname, 'static'), to: 'static'},

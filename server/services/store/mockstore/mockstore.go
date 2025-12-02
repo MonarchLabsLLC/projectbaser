@@ -1152,6 +1152,21 @@ func (mr *MockStoreMockRecorder) GetUserByUsername(arg0 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockStore)(nil).GetUserByUsername), arg0)
 }
 
+// GetUserByKeycloakSubID mocks base method.
+func (m *MockStore) GetUserByKeycloakSubID(arg0 string) (*model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByKeycloakSubID", arg0)
+	ret0, _ := ret[0].(*model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByKeycloakSubID indicates an expected call of GetUserByKeycloakSubID.
+func (mr *MockStoreMockRecorder) GetUserByKeycloakSubID(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByKeycloakSubID", reflect.TypeOf((*MockStore)(nil).GetUserByKeycloakSubID), arg0)
+}
+
 // GetUserCategories mocks base method.
 func (m *MockStore) GetUserCategories(arg0, arg1 string) ([]model.Category, error) {
 	m.ctrl.T.Helper()

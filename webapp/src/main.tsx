@@ -23,6 +23,7 @@ import './styles/_markdown.scss'
 
 import store from './store'
 import WithWebSockets from './components/withWebSockets'
+import {KeycloakAuthProvider} from './components/keycloakAuthProvider'
 
 emojiMartStore.setHandlers({getter: UserSettings.getEmojiMartSetting, setter: UserSettings.setEmojiMartSetting})
 importNativeAppSettings()
@@ -42,7 +43,9 @@ const MainApp = () => {
 ReactDOM.render(
     (
         <ReduxProvider store={store}>
-            <MainApp/>
+            <KeycloakAuthProvider>
+                <MainApp/>
+            </KeycloakAuthProvider>
         </ReduxProvider>
     ),
     document.getElementById('focalboard-app'),

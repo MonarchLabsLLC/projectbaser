@@ -47,6 +47,7 @@
 		"imagemin-pngquant": "^9.0.2",
 		"imagemin-svgo": "^10.0.1",
 		"imagemin-webp": "^7.0.0",
+		"keycloak-js": "^21.1.2",
 		"lodash": "^4.17.21",
 		"lucide-react": "^0.548.0",
 		"marked": "^4.0.12",

@@ -67,6 +67,7 @@ func (s *SQLStore) getUsersByCondition(db sq.BaseRunner, condition interface{}, 
 			"mfa_secret",
 			"auth_service",
 			"auth_data",
+			"keycloak_sub_id",
 			"create_at",
 			"update_at",
 			"delete_at",
@@ -123,6 +124,10 @@ func (s *SQLStore) getUserByUsername(db sq.BaseRunner, username string) (*model.
 	return s.getUserByCondition(db, sq.Eq{"username": username})
 }
 
+func (s *SQLStore) getUserByKeycloakSubID(db sq.BaseRunner, keycloakSubID string) (*model.User, error) {
+	return s.getUserByCondition(db, sq.Eq{"keycloak_sub_id": keycloakSubID})
+}
+
 func (s *SQLStore) createUser(db sq.BaseRunner, user *model.User) (*model.User, error) {
 	now := utils.GetMillis()
 	user.CreateAt = now
@@ -130,8 +135,8 @@ func (s *SQLStore) createUser(db sq.BaseRunner, user *model.User) (*model.User, 
 	user.DeleteAt = 0
 
 	query := s.getQueryBuilder(db).Insert(s.tablePrefix+"users").
-		Columns("id", "username", "email", "password", "mfa_secret", "auth_service", "auth_data", "create_at", "update_at", "delete_at").
-		Values(user.ID, user.Username, user.Email, user.Password, user.MfaSecret, user.AuthService, user.AuthData, user.CreateAt, user.UpdateAt, user.DeleteAt)
+		Columns("id", "username", "email", "password", "mfa_secret", "auth_service", "auth_data", "keycloak_sub_id", "create_at", "update_at", "delete_at").
+		Values(user.ID, user.Username, user.Email, user.Password, user.MfaSecret, user.AuthService, user.AuthData, user.KeycloakSubID, user.CreateAt, user.UpdateAt, user.DeleteAt)
 
 	_, err := query.Exec()
 	return user, err
@@ -144,6 +149,7 @@ func (s *SQLStore) updateUser(db sq.BaseRunner, user *model.User) (*model.User, 
 	query := s.getQueryBuilder(db).Update(s.tablePrefix+"users").
 		Set("username", user.Username).
 		Set("email", user.Email).
+		Set("keycloak_sub_id", user.KeycloakSubID).
 		Set("update_at", user.UpdateAt).
 		Where(sq.Eq{"id": user.ID})
 
@@ -237,6 +243,7 @@ func (s *SQLStore) usersFromRows(rows *sql.Rows) ([]*model.User, error) {
 
 	for rows.Next() {
 		var user model.User
+		var keycloakSubID sql.NullString
 
 		err := rows.Scan(
 			&user.ID,
@@ -246,12 +253,17 @@ func (s *SQLStore) usersFromRows(rows *sql.Rows) ([]*model.User, error) {
 			&user.MfaSecret,
 			&user.AuthService,
 			&user.AuthData,
+			&keycloakSubID,
 			&user.CreateAt,
 			&user.UpdateAt,
 			&user.DeleteAt,
 		)
 		if err != nil {
 			return nil, err
+		}
+
+		if keycloakSubID.Valid {
+			user.KeycloakSubID = keycloakSubID.String
 		}
 
 		users = append(users, &user)

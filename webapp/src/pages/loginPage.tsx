@@ -1,43 +1,31 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import React, {useState} from 'react'
-import {Link, Redirect, useLocation, useHistory} from 'react-router-dom'
-import {FormattedMessage} from 'react-intl'
+import React, {useEffect} from 'react'
+import {Redirect} from 'react-router-dom'
 
-import {useAppDispatch, useAppSelector} from '../store/hooks'
-import {fetchMe, getLoggedIn} from '../store/users'
+import {useAppSelector} from '../store/hooks'
+import {getLoggedIn} from '../store/users'
 
-import Button from '../widgets/buttons/button'
-import client from '../octoClient'
+import {keycloakLogin, isKeycloakAuthenticated} from '../services/keycloak'
+
 import './loginPage.scss'
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
-    const dispatch = useAppDispatch()
     const loggedIn = useAppSelector<boolean|null>(getLoggedIn)
-    const queryParams = new URLSearchParams(useLocation().search)
-    const history = useHistory()
 
-    const handleLogin = async (): Promise<void> => {
-        const logged = await client.login(username, password)
-        if (logged) {
-            await dispatch(fetchMe())
-            if (queryParams) {
-                history.push(queryParams.get('r') || '/')
-            } else {
-                history.push('/')
-            }
-        } else {
-            setErrorMessage('Login failed')
+    useEffect(() => {
+        // If not logged in and not already authenticated with Keycloak, redirect to Keycloak login
+        if (loggedIn === false && !isKeycloakAuthenticated()) {
+            keycloakLogin()
         }
-    }
+    }, [loggedIn])
 
+    // If already logged in, redirect to home
     if (loggedIn) {
         return <Redirect to={'/'}/>
     }
 
+    // Show loading state while redirecting to Keycloak
     return (
         <div className='LoginPage'>
             <div className='login-container'>
@@ -49,62 +37,31 @@ const LoginPage = () => {
                     </svg>
                     <h1>ProjectBaser</h1>
                 </div>
-                <form
-                    onSubmit={(e: React.FormEvent) => {
-                        e.preventDefault()
-                        handleLogin()
-                    }}
-                >
-                    <div className='title'>
-                        <FormattedMessage
-                            id='login.log-in-title'
-                            defaultMessage='Log in'
-                        />
-                    </div>
-                    <div className='username'>
-                        <input
-                            id='login-username'
-                            placeholder={'Enter username'}
-                            value={username}
-                            onChange={(e) => {
-                                setUsername(e.target.value)
-                                setErrorMessage('')
-                            }}
-                        />
-                    </div>
-                    <div className='password'>
-                        <input
-                            id='login-password'
-                            type='password'
-                            placeholder={'Enter password'}
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value)
-                                setErrorMessage('')
-                            }}
-                        />
-                    </div>
-                    <Button
-                        filled={true}
-                        submit={true}
-                    >
-                        <FormattedMessage
-                            id='login.log-in-button'
-                            defaultMessage='Log in'
-                        />
-                    </Button>
-                </form>
-                <Link to='/register' className='register-link'>
-                    <FormattedMessage
-                        id='login.register-button'
-                        defaultMessage={'or create an account if you don\'t have one'}
-                    />
-                </Link>
-                {errorMessage &&
-                    <div className='error'>
-                        {errorMessage}
-                    </div>
-                }
+                <div className='loading-section'>
+                    <div className='loading-spinner' style={{
+                        width: '32px',
+                        height: '32px',
+                        border: '3px solid rgba(255, 255, 255, 0.2)',
+                        borderTopColor: 'rgba(255, 255, 255, 0.8)',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 16px',
+                    }} />
+                    <style>
+                        {`
+                            @keyframes spin {
+                                to { transform: rotate(360deg); }
+                            }
+                        `}
+                    </style>
+                    <p style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        textAlign: 'center',
+                        margin: 0,
+                    }}>
+                        Redirecting to login...
+                    </p>
+                </div>
             </div>
         </div>
     )

@@ -187,6 +187,7 @@ func (s *SQLStore) blocksFromRows(rows *sql.Rows) ([]*model.Block, error) {
 		var fieldsJSON string
 		var modifiedBy sql.NullString
 		var insertAt sql.NullString
+		var title sql.NullString
 
 		err := rows.Scan(
 			&block.ID,
@@ -195,7 +196,7 @@ func (s *SQLStore) blocksFromRows(rows *sql.Rows) ([]*model.Block, error) {
 			&modifiedBy,
 			&block.Schema,
 			&block.Type,
-			&block.Title,
+			&title,
 			&fieldsJSON,
 			&insertAt,
 			&block.CreateAt,
@@ -211,6 +212,9 @@ func (s *SQLStore) blocksFromRows(rows *sql.Rows) ([]*model.Block, error) {
 
 		if modifiedBy.Valid {
 			block.ModifiedBy = modifiedBy.String
+		}
+		if title.Valid {
+			block.Title = title.String
 		}
 
 		err = json.Unmarshal([]byte(fieldsJSON), &block.Fields)
