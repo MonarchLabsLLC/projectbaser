@@ -27,6 +27,7 @@ const mockedinsertPropertyOption = jest.spyOn(mutator, 'insertPropertyOption')
 describe('src/component/kanban/kanban', () => {
     const board = TestBlockFactory.createBoard()
     const activeView = TestBlockFactory.createBoardView(board)
+    activeView.fields.sortOptions = []
     const card1 = TestBlockFactory.createCard(board)
     card1.id = 'id1'
     card1.fields.properties = {id: 'property_value_id_1'}
@@ -313,6 +314,60 @@ describe('src/component/kanban/kanban', () => {
             expect(mockedChangeViewCardOrder).toBeCalled()
         })
     })
+    test('column drop persists a complete manual order when existing cardOrder is incomplete', async () => {
+        const localView = {
+            ...activeView,
+            fields: {
+                ...activeView.fields,
+                cardOrder: ['id2'],
+                sortOptions: [],
+            },
+        }
+        const {container} = render(wrapDNDIntl(
+            <ReduxProvider store={store}>
+                <Kanban
+                    board={board}
+                    activeView={localView}
+                    cards={[card1, card2, card3]}
+                    groupByProperty={groupProperty}
+                    visibleGroups={[
+                        {
+                            option: optionQ1,
+                            cards: [card1, card2],
+                        }, {
+                            option: optionQ2,
+                            cards: [card3],
+                        },
+                    ]}
+                    hiddenGroups={[
+                        {
+                            option: optionQ3,
+                            cards: [],
+                        },
+                    ]}
+                    selectedCardIds={[]}
+                    readonly={false}
+                    onCardClicked={jest.fn()}
+                    addCard={jest.fn()}
+                    addCardFromTemplate={jest.fn()}
+                    showCard={jest.fn()}
+                    hiddenCardsCount={0}
+                    showHiddenCardCountNotification={jest.fn()}
+                />
+            </ReduxProvider>,
+        ), {wrapper: MemoryRouter})
+
+        const cardsElement = container.querySelectorAll('.KanbanCard')
+        const columnQ2Element = container.querySelector('.octo-board-column:nth-child(2)')
+        fireEvent.dragStart(cardsElement[0])
+        fireEvent.dragEnter(columnQ2Element!)
+        fireEvent.dragOver(columnQ2Element!)
+        fireEvent.drop(columnQ2Element!)
+
+        await waitFor(async () => {
+            expect(mockedChangeViewCardOrder).toBeCalledWith(board.id, localView.id, ['id2'], ['id2', 'id3', 'id1'], 'drag card')
+        })
+    })
     test('return kanban and change card column to hidden column', async () => {
         const {container} = render(wrapDNDIntl(
             <ReduxProvider store={store}>
@@ -535,6 +590,7 @@ describe('src/component/kanban/kanban', () => {
 describe('src/component/kanban/kanban', () => {
     const board = TestBlockFactory.createBoard()
     const activeView = TestBlockFactory.createBoardView(board)
+    activeView.fields.sortOptions = []
     const card1 = TestBlockFactory.createCard(board)
     card1.id = 'id1'
     card1.fields.properties = {id: 'property_value_id_1'}

@@ -111,6 +111,43 @@ describe('src/components/kanban/kanbanCard', () => {
         ), {wrapper: MemoryRouter})
         expect(container).toMatchSnapshot()
     })
+    test('only enables dragging when manual sort is active', () => {
+        const {container, rerender} = render(wrapDNDIntl(
+            <ReduxProvider store={store}>
+                <KanbanCard
+                    card={card}
+                    board={board}
+                    visiblePropertyTemplates={[propertyTemplate]}
+                    visibleBadges={false}
+                    isSelected={false}
+                    readonly={false}
+                    onDrop={jest.fn()}
+                    showCard={jest.fn()}
+                    isManualSort={false}
+                />
+            </ReduxProvider>,
+        ), {wrapper: MemoryRouter})
+
+        expect(container.querySelector('.KanbanCard')).toHaveAttribute('draggable', 'false')
+
+        rerender(wrapDNDIntl(
+            <ReduxProvider store={store}>
+                <KanbanCard
+                    card={card}
+                    board={board}
+                    visiblePropertyTemplates={[propertyTemplate]}
+                    visibleBadges={false}
+                    isSelected={false}
+                    readonly={false}
+                    onDrop={jest.fn()}
+                    showCard={jest.fn()}
+                    isManualSort={true}
+                />
+            </ReduxProvider>,
+        ))
+
+        expect(container.querySelector('.KanbanCard')).toHaveAttribute('draggable', 'true')
+    })
     test('return kanbanCard and click on delete menu ', () => {
         const result = render(wrapDNDIntl(
             <ReduxProvider store={store}>
