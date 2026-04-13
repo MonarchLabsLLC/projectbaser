@@ -94,19 +94,24 @@ const Kanban = (props: Props) => {
     }, [board, groupByProperty])
 
     const orderAfterMoveToColumn = useCallback((cardIds: string[], columnId?: string): string[] => {
-        let cardOrder = activeView.fields.cardOrder.slice()
-        const columnGroup = visibleGroups.find((g) => g.option.id === columnId)
+        const setOfIds = new Set(cardIds)
+        const cardOrder = cards.map((o) => o.id).filter((id) => !setOfIds.has(id))
+        const columnGroup = [...visibleGroups, ...hiddenGroups].find((g) => g.option.id === columnId)
         const columnCards = columnGroup?.cards
         if (!columnCards || columnCards.length === 0) {
-            return cardOrder
+            return [...cardOrder, ...cardIds]
         }
-        const lastCardId = columnCards[columnCards.length - 1].id
-        const setOfIds = new Set(cardIds)
-        cardOrder = cardOrder.filter((id) => !setOfIds.has(id))
+        const lastCardId = columnCards.map((o) => o.id).filter((id) => !setOfIds.has(id)).pop()
+        if (!lastCardId) {
+            return [...cardOrder, ...cardIds]
+        }
         const lastCardIndex = cardOrder.indexOf(lastCardId)
+        if (lastCardIndex < 0) {
+            return [...cardOrder, ...cardIds]
+        }
         cardOrder.splice(lastCardIndex + 1, 0, ...cardIds)
         return cardOrder
-    }, [activeView, visibleGroups])
+    }, [cards, visibleGroups, hiddenGroups])
 
     const onDropToColumn = useCallback(async (option: IPropertyOption, card?: Card, dstOption?: IPropertyOption) => {
         const {selectedCardIds} = props

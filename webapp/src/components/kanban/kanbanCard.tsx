@@ -86,7 +86,8 @@ type Props = {
 const KanbanCard = (props: Props) => {
     const {card, board} = props
     const intl = useIntl()
-    const [isDragging, isOver, cardRef, preview] = useSortable('card', card, !props.readonly, props.onDrop)
+    const canDrag = !props.readonly && props.isManualSort
+    const [isDragging, isOver, cardRef, preview] = useSortable('card', card, canDrag, props.onDrop)
     const visiblePropertyTemplates = props.visiblePropertyTemplates || []
     let className = props.isSelected ? 'KanbanCard selected' : 'KanbanCard'
     if (props.isManualSort && isOver) {
@@ -228,7 +229,7 @@ const KanbanCard = (props: Props) => {
             <div
                 ref={props.readonly ? () => null : cardRef}
                 className={`${className} ${isDragging ? 'is-dragging' : ''}`}
-                draggable={!props.readonly}
+                draggable={canDrag}
                 onDragStart={handleDragStart}
                 onDrag={handleDrag}
                 onDragEnd={handleDragEnd}
