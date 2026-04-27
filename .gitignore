@@ -77,3 +77,12 @@ server/**/*.coverage
 
 # Runtime config with secrets
 focalboard/config.json
+
+# === secrets / env / snapshot ignore (managed) ===
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+.backup/
+.lh/
