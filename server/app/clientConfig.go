@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/mattermost/focalboard/server/model"
+	"github.com/mattermost/focalboard/server/services/scaleworkspace"
 )
 
 func (a *App) GetClientConfig() *model.ClientConfig {
@@ -12,5 +13,6 @@ func (a *App) GetClientConfig() *model.ClientConfig {
 		TeammateNameDisplay:      a.config.TeammateNameDisplay,
 		FeatureFlags:             a.config.FeatureFlags,
 		MaxFileSize:              a.config.MaxFileSize,
+		ScaleTeamWorkspaces:      scaleworkspace.Enabled(),
 	}
 }

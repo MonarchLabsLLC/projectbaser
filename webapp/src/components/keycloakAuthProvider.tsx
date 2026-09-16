@@ -17,6 +17,7 @@ import client from '../octoClient'
 import {useAppDispatch} from '../store/hooks'
 import {setMe} from '../store/users'
 import {IUser} from '../user'
+import {getPendingScaleWorkspaceCode, removeScaleWorkspaceCodeFromURL} from '../scaleWorkspace'
 import {UserSettings} from '../userSettings'
 
 // Required role for accessing this application
@@ -104,6 +105,25 @@ export const KeycloakAuthProvider: React.FC<KeycloakAuthProviderProps> = ({child
                         if (loggedInUser) {
                             setUser(loggedInUser)
                             setIsAuthenticated(true)
+
+                            // The code remains URL-only through Keycloak
+                            // login, then is exchanged server-side against
+                            // the authenticated session exactly once.
+                            const workspaceCode = getPendingScaleWorkspaceCode()
+                            if (workspaceCode) {
+                                removeScaleWorkspaceCodeFromURL()
+                                const exchange = await client.exchangeScaleWorkspace(workspaceCode)
+                                if (!isMounted) {
+                                    return
+                                }
+                                if (exchange && exchange.teamId) {
+                                    localStorage.setItem('focalboardTeamId', exchange.teamId)
+                                    UserSettings.setLastTeamID(exchange.teamId)
+                                    const returnPath = exchange.returnPath && exchange.returnPath.startsWith('/') && !exchange.returnPath.startsWith('//') ? exchange.returnPath : '/'
+                                    window.location.replace(returnPath)
+                                    return
+                                }
+                            }
                         } else {
                             // Backend login failed
                             console.error('Backend authentication failed')
@@ -135,6 +155,10 @@ export const KeycloakAuthProvider: React.FC<KeycloakAuthProviderProps> = ({child
     }, [dispatch])
 
     const login = useCallback(() => {
+        if (getPendingScaleWorkspaceCode()) {
+            keycloakLogin(window.location.pathname + window.location.search)
+            return
+        }
         keycloakLogin()
     }, [])
 
