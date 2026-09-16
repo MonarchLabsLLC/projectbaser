@@ -18,6 +18,11 @@ import {Constants} from './constants'
 import {BoardsCloudLimits} from './boardsCloudLimits'
 import {TopBoardResponse} from './insights'
 import {BoardSiteStatistics} from './statistics'
+import {getKeycloakToken} from './services/keycloak'
+import {
+    ScaleWorkspaceExchangeResult,
+    setScaleWorkspaceFeatureEnabled,
+} from './scaleWorkspace'
 
 // Global flag to prevent multiple simultaneous auth redirects
 let isRedirectingToAuth = false
@@ -194,7 +199,22 @@ class OctoClient {
         }
 
         const json = (await this.getJson(response, {})) as ClientConfig
+        setScaleWorkspaceFeatureEnabled(json.scaleTeamWorkspaces === true)
         return json
+    }
+
+    // Consumes an opaque, short-lived hub code server-side. No central
+    // credentials, Keycloak token, or workspace context is persisted here.
+    async exchangeScaleWorkspace(code: string): Promise<ScaleWorkspaceExchangeResult | null> {
+        const response = await fetch(this.getBaseURL() + '/api/v2/scale-workspace/exchange', {
+            method: 'POST',
+            headers: this.headers(),
+            body: JSON.stringify({code}),
+        })
+        if (response.status !== 200) {
+            return null
+        }
+        return (await this.getJson(response, null)) as ScaleWorkspaceExchangeResult | null
     }
 
     async register(email: string, username: string, password: string, token?: string): Promise<{code: number, json: {error?: string}}> {
@@ -222,12 +242,22 @@ class OctoClient {
     }
 
     private headers() {
-        return {
+        const headers: Record<string, string> = {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             Authorization: this.token ? 'Bearer ' + this.token : '',
             'X-Requested-With': 'XMLHttpRequest',
         }
+
+        // The config request itself must carry the actor token after a guest
+        // page reload, before it can report the feature gate. Disabled servers
+        // ignore this header; enabled guest sessions re-authorize it centrally.
+        const keycloakToken = getKeycloakToken()
+        if (keycloakToken) {
+            headers['X-Scale-Keycloak-Token'] = keycloakToken
+        }
+
+        return headers
     }
 
     private teamPath(teamId?: string): string {

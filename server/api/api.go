@@ -62,9 +62,10 @@ func NewAPI(
 }
 
 func (a *API) RegisterRoutes(r *mux.Router) {
-        apiv2 := r.PathPrefix("/api/v2").Subrouter()
-        apiv2.Use(a.panicHandler)
-        apiv2.Use(a.requireCSRFToken)
+	apiv2 := r.PathPrefix("/api/v2").Subrouter()
+	apiv2.Use(a.panicHandler)
+	apiv2.Use(a.requireCSRFToken)
+	apiv2.Use(a.scaleWorkspaceGuard)
 
         /* ToDo:
         apiv3 := r.PathPrefix("/api/v3").Subrouter()
@@ -76,6 +77,7 @@ func (a *API) RegisterRoutes(r *mux.Router) {
 	a.registerUsersRoutes(apiv2)
 	a.registerAuthRoutes(apiv2)
 	a.registerKeycloakAuthRoutes(apiv2)
+	a.registerScaleWorkspaceRoutes(apiv2)
         a.registerMembersRoutes(apiv2)
         a.registerCategoriesRoutes(apiv2)
         a.registerSharingRoutes(apiv2)
@@ -98,8 +100,9 @@ func (a *API) RegisterRoutes(r *mux.Router) {
         // V3 routes
         a.registerCardsRoutes(apiv2)
 
-        // System routes are outside the /api/v2 path
-        a.registerSystemRoutes(r)
+	// System routes are outside the /api/v2 path
+	a.registerSystemRoutes(r)
+	a.registerScaleWorkspacePublicRoutes(r)
 }
 
 func (a *API) RegisterAdminRoutes(r *mux.Router) {

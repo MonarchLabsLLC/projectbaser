@@ -51,11 +51,13 @@ export const initKeycloak = async (): Promise<boolean> => {
 }
 
 /**
- * Login via Keycloak - redirects to Keycloak login page
+ * Login via Keycloak - redirects to Keycloak login page. A local return path
+ * is used only to keep a short-lived workspace launch code in the URL.
  */
-export const keycloakLogin = (): void => {
+export const keycloakLogin = (redirectPath?: string): void => {
+    const safePath = redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//') ? redirectPath : '/'
     keycloak.login({
-        redirectUri: window.location.origin + '/',
+        redirectUri: window.location.origin + safePath,
     })
 }
 

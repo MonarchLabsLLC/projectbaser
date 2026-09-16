@@ -26,4 +26,8 @@ type ClientConfig struct {
 	// Required for file upload to check the size of the file
 	// required: true
 	MaxFileSize int64 `json:"maxFileSize"`
+
+	// ScaleTeamWorkspaces is only a display/boot gate. The server remains the
+	// authorization authority for every guest request.
+	ScaleTeamWorkspaces bool `json:"scaleTeamWorkspaces"`
 }
