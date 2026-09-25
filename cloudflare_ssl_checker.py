@@ -5,16 +5,17 @@ Lists all domains on Flexible SSL and can update them to Full mode.
 Uses concurrent requests for faster processing.
 """
 
+import os
 import requests
 import json
 import concurrent.futures
 import time
 import sys
 
-# Cloudflare Credentials
-CLOUDFLARE_EMAIL = "housni@groovedigital.com"
-CLOUDFLARE_TOKEN = "BXDi2zlywTaXCL4vswMZHq4SG7TvsW8M7sT8mUTL"
-CLOUDFLARE_ACCOUNT_ID = "ac0f8f0852a759739d1b38341e14f51a"
+# Cloudflare credentials come from the environment; never commit them.
+CLOUDFLARE_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "").strip()
+if not CLOUDFLARE_TOKEN:
+    sys.exit("Set CLOUDFLARE_API_TOKEN to a Cloudflare API token with Zone Settings read/edit permission.")
 
 # API Headers (using Bearer token format for API Tokens)
 headers = {
