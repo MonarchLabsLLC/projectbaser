@@ -2,6 +2,8 @@
 
 Welcome to ProjectBaser, your self-hosted project management solution for technical teams!
 
+> **Legacy notice:** This is the legacy version of ProjectBaser, and it will be sunset within the next 90 days. We recommend moving your data to the new ProjectBaser at [go.pipeleads.ai/pm/boards](https://go.pipeleads.ai/pm/boards). The **Sign in** and **Open ProjectBaser** buttons on the public website now open the new ProjectBaser, which asks you to log in if you aren't already.
+
 ---
 
 ## Table of Contents
@@ -61,6 +63,7 @@ You'll be taken directly to your dashboard where you can start creating boards.
 
 When you log in, you'll see:
 
+- **Legacy banner** (top): A notice that this app is being sunset, with a **Go to the new ProjectBaser** button that opens the new app in a new tab
 - **Sidebar** (left): Navigation menu with:
   - ProjectBaser logo
   - Board list

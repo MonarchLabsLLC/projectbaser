@@ -1,0 +1,30 @@
+.LegacySunsetBanner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+    padding: 10px 16px;
+    background-color: #fff4e5;
+    border-bottom: 1px solid #f5c26b;
+    color: #5c3b00;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+
+    .LegacySunsetBanner__link {
+        flex: 0 0 auto;
+        padding: 4px 12px;
+        border-radius: 4px;
+        background-color: #b45309;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            background-color: #92400e;
+            color: #fff;
+        }
+    }
+}
