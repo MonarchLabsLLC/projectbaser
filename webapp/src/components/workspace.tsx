@@ -32,6 +32,7 @@ import {getHiddenBoardIDs} from '../store/sidebar'
 import CenterPanel from './centerPanel'
 import BoardTemplateSelector from './boardTemplateSelector/boardTemplateSelector'
 import GuestNoBoards from './guestNoBoards'
+import LegacySunsetBanner from './legacySunsetBanner'
 
 import Sidebar from './sidebar/sidebar'
 
@@ -184,6 +185,7 @@ const Workspace = (props: Props) => {
                 />
             }
             <div className='mainFrame'>
+                <LegacySunsetBanner/>
                 {boardTemplateSelectorOpen &&
                     <BoardTemplateSelector onClose={closeBoardTemplateSelector}/>}
                 {(board?.isTemplate) &&
