@@ -28,6 +28,19 @@
             "description": "A project workspace with boards, cards, custom properties, four board views, templates, sharing, comments, mentions, export, and backup workflows."
         }
     </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            "name": "Introducing ProjectBaser",
+            "description": "A 1:49 tour of ProjectBaser: boards, cards, views, collaboration, and templates.",
+            "thumbnailUrl": ["https://projectbaser.com/static/landing/media/projectbaser-poster.jpg"],
+            "uploadDate": "2026-09-28",
+            "duration": "PT1M49S",
+            "embedUrl": "https://www.youtube.com/embed/DTc42Bi-p4I",
+            "contentUrl": "https://youtu.be/DTc42Bi-p4I"
+        }
+    </script>
     <style>
         @font-face {
             font-family: "ProjectBaser Geist";
@@ -1779,6 +1792,600 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* ------------------------------------------------------------------
+           Landing facelift (September 2026): hero product video, image
+           collection, real screenshots beside the copy they prove, and the
+           Feature Atlas band. Ported from the Scale.gg brand site's shared
+           video-card, shots, feature-rows and feature-atlas-cta components.
+           Layout rule: the hero is split in markup (lead / video / more) and
+           placed with a named grid. Never rearrange it with :has(),
+           display: contents or order.
+           ------------------------------------------------------------------ */
+        .hero-grid.hero-grid--video {
+            align-items: start;
+            align-content: center;
+            column-gap: clamp(42px, 5vw, 72px);
+            row-gap: 0;
+            grid-template-areas: "lead video" "more video";
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            grid-template-rows: auto auto;
+        }
+
+        .hero-grid--video > * { min-width: 0; }
+        .hero-grid--video > .hero-lead-block { grid-area: lead; align-self: end; }
+        .hero-grid--video > .hero-more { grid-area: more; align-self: start; }
+        .hero-grid--video > .video-card--hero { grid-area: video; align-self: center; }
+        .hero-lead-block .hero-lead { margin-bottom: 17px; }
+
+        .video-card--hero {
+            position: relative;
+            isolation: isolate;
+            width: 100%;
+            max-width: 820px;
+            justify-self: end;
+            scroll-margin-top: 110px;
+        }
+
+        .video-card--hero::before {
+            position: absolute;
+            z-index: -1;
+            inset: 28px -12px 18px 28px;
+            content: "";
+            border-radius: 28px;
+            background: var(--lilac);
+            opacity: 0.5;
+            transform: rotate(-1.6deg);
+        }
+
+        .video-card .video-card-poster {
+            --lift: 0px;
+            position: relative;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: #16142e;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(31, 29, 61, 0.06), 0 34px 72px -30px rgba(31, 29, 61, 0.5);
+            transform: translateY(var(--lift));
+            transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 520ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .video-card .video-card-poster picture,
+        .video-card .video-card-poster img { display: block; width: 100%; height: 100%; }
+        .video-card .video-card-poster img { object-fit: cover; }
+
+        .video-card .video-card-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: grid;
+            width: clamp(56px, 11%, 96px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 10px 30px -8px rgba(12, 11, 28, 0.55), 0 0 0 6px rgba(255, 255, 255, 0.22);
+            place-items: center;
+            transform: translate(-50%, -50%);
+            transition: transform 320ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 320ms ease;
+        }
+
+        .video-card .video-card-play::before {
+            width: 0;
+            height: 0;
+            margin-left: 9%;
+            border-color: transparent transparent transparent var(--sidebar);
+            border-style: solid;
+            border-width: 0.62em 0 0.62em 1.02em;
+            content: "";
+            font-size: clamp(14px, 1.8vw, 22px);
+        }
+
+        .video-card .video-card-badge {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            padding: 5px 9px;
+            border-radius: 8px;
+            background: rgba(12, 11, 28, 0.78);
+            color: #fff;
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 12px;
+            font-weight: 560;
+            letter-spacing: 0.04em;
+            line-height: 1;
+        }
+
+        .video-card .video-card-poster::after {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            content: "";
+            opacity: 0;
+            background: radial-gradient(520px circle at 60% 40%, rgba(255, 255, 255, 0.16), transparent 60%);
+            transition: opacity 400ms ease;
+        }
+
+        .video-card .video-card-glint,
+        .shot-glint {
+            position: absolute;
+            inset: -20% -60%;
+            pointer-events: none;
+            opacity: 0;
+            background: linear-gradient(90deg, transparent 38%, rgba(255, 255, 255, 0.3) 50%, transparent 62%);
+            transform: translateX(-60%) skewX(-18deg);
+        }
+
+        .video-card-hero-label,
+        .shot-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 11.5px;
+            font-weight: 560;
+            letter-spacing: 0.12em;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .video-card-hero-label::before {
+            width: 0;
+            height: 0;
+            flex: none;
+            border-color: transparent transparent transparent var(--coral);
+            border-style: solid;
+            border-width: 5px 0 5px 8px;
+            content: "";
+        }
+
+        .shot-label::before {
+            width: 7px;
+            height: 7px;
+            flex: none;
+            border-radius: 50%;
+            background: #26a269;
+            content: "";
+        }
+
+        /* Real screenshot frame with hover lift, cursor light and click-to-enlarge. */
+        .shot { min-width: 0; margin: 0; perspective: 1400px; }
+
+        .shot-frame {
+            --rx: 0deg;
+            --ry: 0deg;
+            --lift: 0px;
+            --gx: 50%;
+            --gy: 50%;
+            position: relative;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #dad7e0;
+            border-radius: 18px;
+            background: #fff;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: zoom-in;
+            box-shadow: 0 1px 2px rgba(31, 29, 61, 0.06), 0 26px 56px -30px rgba(31, 29, 61, 0.42);
+            transform: rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+            transform-style: preserve-3d;
+            transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 520ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .shot-frame.is-tilting { transition: transform 140ms linear, box-shadow 520ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+        .shot-chrome {
+            display: flex;
+            height: 26px;
+            align-items: center;
+            gap: 6px;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--line);
+            background: #f7f7f3;
+        }
+
+        .shot-chrome i { width: 8px; height: 8px; border-radius: 50%; background: #deded8; }
+        .shot-chrome i:first-child { background: var(--peach); }
+        .shot-chrome i:nth-child(2) { background: var(--yellow); }
+        .shot-chrome i:nth-child(3) { background: var(--mint); }
+
+        .shot-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1536 / 784;
+            background: #f7f7f3;
+        }
+
+        .shot-frame::after {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            content: "";
+            opacity: 0;
+            background: radial-gradient(520px circle at var(--gx) var(--gy), rgba(255, 255, 255, 0.28), transparent 60%);
+            transition: opacity 400ms ease;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .video-card .video-card-poster:hover,
+            .shot-frame:hover {
+                --lift: -8px;
+                box-shadow: 0 2px 4px rgba(31, 29, 61, 0.06), 0 44px 80px -30px rgba(31, 29, 61, 0.45);
+            }
+            .video-card .video-card-poster:hover::after,
+            .shot-frame:hover::after { opacity: 1; }
+            .video-card .video-card-poster:hover .video-card-glint,
+            .shot-frame:hover .shot-glint {
+                opacity: 1;
+                transform: translateX(60%) skewX(-18deg);
+                transition: transform 1100ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms ease;
+            }
+            .video-card .video-card-poster:hover .video-card-play {
+                box-shadow: 0 14px 36px -8px rgba(12, 11, 28, 0.6), 0 0 0 8px rgba(255, 255, 255, 0.28);
+                transform: translate(-50%, -50%) scale(1.08);
+            }
+        }
+
+        .video-card .video-card-poster:active .video-card-play { transform: translate(-50%, -50%) scale(0.96); }
+
+        /* Image collection directly below the hero. */
+        .shots-collection {
+            padding: clamp(64px, 8vw, 112px) 0;
+            border-top: 1px solid var(--line);
+            background: var(--soft);
+            overflow-x: clip;
+        }
+
+        .collection-head { max-width: 760px; margin-bottom: clamp(34px, 4vw, 56px); }
+        .collection-head .eyebrow { margin-bottom: 20px; }
+
+        .collection-head h2 {
+            margin-bottom: 18px;
+            font-size: clamp(42px, 4.6vw, 66px);
+        }
+
+        .collection-head p {
+            max-width: 56ch;
+            margin: 0;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .collection-grid {
+            position: relative;
+            isolation: isolate;
+            display: grid;
+            align-items: start;
+            gap: clamp(20px, 2.4vw, 32px);
+            grid-template-columns: minmax(0, 2.45fr) minmax(0, 1fr);
+        }
+
+        .collection-grid::before {
+            position: absolute;
+            z-index: -1;
+            inset: 8% -2% -5% 4%;
+            content: "";
+            border-radius: 32px;
+            background: var(--lilac);
+            opacity: 0.38;
+            transform: rotate(-0.8deg);
+        }
+
+        .collection-grid > .collection-main { grid-row: 1 / span 2; }
+        .collection-grid .collection-main .shot-frame { border-radius: 20px; }
+        .collection-grid .shot-frame { border-radius: 16px; }
+
+        .collection-aside {
+            width: min(780px, 100%);
+            margin: clamp(56px, 7vw, 88px) auto 0;
+        }
+
+        .collection-aside-note {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 11.5px;
+            font-weight: 560;
+            letter-spacing: 0.12em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* A real screen beside the copy it proves (zig-zag rows). */
+        .proof-shot { position: relative; isolation: isolate; }
+
+        .proof-shot::before {
+            position: absolute;
+            z-index: -1;
+            inset: 9% -4% -7% 6%;
+            content: "";
+            border-radius: 28px;
+            background: var(--lilac);
+            opacity: 0.42;
+            transform: rotate(-1.4deg);
+        }
+
+        .proof-shot.proof-shot--mint::before { background: var(--mint); opacity: 0.7; }
+        .proof-shot .shot-frame { border-radius: 20px; box-shadow: 0 1px 2px rgba(31, 29, 61, 0.06), 0 30px 64px -30px rgba(31, 29, 61, 0.42); }
+
+        .portability-layout.portability-layout--shot { align-items: center; row-gap: clamp(48px, 6vw, 80px); }
+        .portability-layout--shot > .portability-ui { grid-column: 1 / -1; }
+
+        /* Feature Atlas band. */
+        .atlas-cta-band { padding: clamp(56px, 7vw, 104px) 0; }
+
+        .atlas-cta {
+            position: relative;
+            isolation: isolate;
+            display: grid;
+            align-items: center;
+            gap: clamp(28px, 4vw, 64px);
+            padding: clamp(28px, 4.5vw, 64px);
+            overflow: hidden;
+            border-radius: 32px;
+            background:
+                radial-gradient(70% 90% at 100% 0%, rgba(197, 176, 244, 0.38), transparent 60%),
+                radial-gradient(60% 80% at 0% 100%, rgba(243, 199, 177, 0.2), transparent 65%),
+                linear-gradient(155deg, #221f45, #15132b 70%);
+            color: #fff;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        }
+
+        .atlas-cta::before {
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            content: "";
+            opacity: 0.22;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: radial-gradient(80% 90% at 70% 40%, #000 20%, transparent 75%);
+        }
+
+        .atlas-cta .atlas-cta-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 18px;
+            color: #dceeb1;
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 12px;
+            font-weight: 580;
+            letter-spacing: 0.14em;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .atlas-cta-kicker span {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #dceeb1;
+            box-shadow: 0 0 0 4px rgba(220, 238, 177, 0.18);
+        }
+
+        .atlas-cta h2 {
+            margin: 0;
+            color: #fff;
+            font-size: clamp(34px, 3.8vw, 54px);
+            font-weight: 480;
+            letter-spacing: -0.04em;
+            line-height: 1.04;
+            text-wrap: balance;
+        }
+
+        .atlas-cta h2 em { color: var(--lilac); font-style: normal; }
+
+        .atlas-cta .atlas-cta-copy > p:not(.atlas-cta-kicker) {
+            max-width: 46ch;
+            margin: 18px 0 0;
+            color: rgba(255, 255, 255, 0.76);
+            font-size: clamp(16px, 1.3vw, 18px);
+            line-height: 1.55;
+        }
+
+        .atlas-cta-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 18px;
+            margin-top: 28px;
+        }
+
+        .atlas-cta-actions .button { border-color: #fff; background: #fff; color: #15132b; }
+        .atlas-cta-actions .button span { transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+        .atlas-cta-actions .button:hover span { transform: translateX(4px); }
+
+        .atlas-cta-actions small {
+            color: rgba(255, 255, 255, 0.64);
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 12px;
+            letter-spacing: 0.04em;
+        }
+
+        .atlas-cta-peek { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+
+        .atlas-cta-peek a {
+            display: grid;
+            gap: 6px;
+            padding: 18px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            text-decoration: none;
+            transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), background-color 300ms ease, border-color 300ms ease;
+        }
+
+        .atlas-cta-peek li:nth-child(1) a { border-left: 3px solid #dceeb1; }
+        .atlas-cta-peek li:nth-child(2) a { border-left: 3px solid var(--lilac); }
+        .atlas-cta-peek li:nth-child(3) a { border-left: 3px solid #fff; }
+        .atlas-cta-peek a:hover { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.09); transform: translateX(6px); }
+
+        .atlas-cta-peek small {
+            color: rgba(255, 255, 255, 0.62);
+            font-family: "ProjectBaser Geist Mono", monospace;
+            font-size: 11.5px;
+            font-weight: 560;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .atlas-cta-peek b { font-size: clamp(17px, 1.5vw, 20px); font-weight: 520; letter-spacing: -0.015em; line-height: 1.3; }
+
+        /* Video modal (built by the script at the end of the page). */
+        html.vc-modal-open,
+        html.shot-lightbox-open { overflow: hidden; }
+        .vc-modal[hidden] { display: none; }
+
+        .vc-modal {
+            position: fixed;
+            z-index: 2147483647;
+            inset: 0;
+            display: grid;
+            padding: clamp(12px, 4vw, 48px);
+            place-items: center;
+        }
+
+        .vc-modal-sentinel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        .vc-modal-backdrop { position: absolute; inset: 0; background: rgba(12, 11, 28, 0.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+        .vc-modal-panel {
+            position: relative;
+            width: min(1200px, 100%, calc((100dvh - 120px) * 16 / 9));
+            min-width: 0;
+            color: #fff;
+            animation: pb-modal-in 260ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .vc-modal-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+        .vc-modal .vc-modal-title { min-width: 0; margin: 0; color: #fff; font-size: clamp(15px, 1.6vw, 18px); font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+
+        .vc-modal .vc-modal-close,
+        .shot-lightbox button {
+            display: grid;
+            flex: none;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font: inherit;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            place-items: center;
+            transition: background-color 160ms ease, transform 160ms ease;
+        }
+
+        .vc-modal .vc-modal-close:hover,
+        .shot-lightbox button:hover { background: rgba(255, 255, 255, 0.18); }
+        .vc-modal .vc-modal-close:focus-visible,
+        .shot-lightbox button:focus-visible { outline: 3px solid var(--lilac); outline-offset: 3px; }
+
+        .vc-modal-frame { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: 14px; background: #000; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5); }
+        .vc-modal-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+        /* Screenshot lightbox. */
+        .shot-lightbox {
+            width: min(1480px, 100vw);
+            max-width: 100vw;
+            height: 100dvh;
+            max-height: 100dvh;
+            margin: 0 auto;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+            background: transparent;
+            color: #fff;
+        }
+
+        .shot-lightbox::backdrop { background: rgba(12, 11, 28, 0.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .shot-lightbox[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; animation: pb-modal-in 260ms cubic-bezier(0.23, 1, 0.32, 1); }
+        .shot-lightbox-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px clamp(12px, 3vw, 28px); }
+        .shot-lightbox-count { color: rgba(255, 255, 255, 0.66); font-family: "ProjectBaser Geist Mono", monospace; font-size: 12px; letter-spacing: 0.08em; }
+        .shot-lightbox-stage { position: relative; display: grid; min-height: 0; padding: 0 clamp(12px, 5vw, 76px); place-items: center; }
+        .shot-lightbox-stage img { display: block; width: auto; max-width: 100%; height: auto; max-height: 100%; border-radius: 12px; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5); object-fit: contain; }
+        .shot-lightbox-caption { max-width: 72ch; margin: 0 auto; padding: 16px clamp(16px, 4vw, 32px) 22px; text-align: center; }
+        .shot-lightbox-caption strong { display: block; font-size: 17px; font-weight: 600; }
+        .shot-lightbox-caption span { display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.72); font-size: 15px; line-height: 1.5; }
+        .shot-lightbox-prev, .shot-lightbox-next { position: absolute; top: 50%; transform: translateY(-50%); }
+        .shot-lightbox .shot-lightbox-prev { left: clamp(8px, 1.6vw, 20px); }
+        .shot-lightbox .shot-lightbox-next { right: clamp(8px, 1.6vw, 20px); }
+
+        @keyframes pb-modal-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+
+        @media (max-width: 1120px) {
+            .hero-grid.hero-grid--video { column-gap: 42px; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+        }
+
+        @media (max-width: 980px) {
+            /* One column in source order: eyebrow, h1, lead, video, the rest and the CTAs. */
+            .hero-grid.hero-grid--video { grid-template-areas: "lead" "video" "more"; grid-template-columns: minmax(0, 1fr); }
+            .hero-grid--video > .video-card--hero { max-width: 780px; margin: 10px 0 34px; justify-self: start; }
+            .video-card--hero::before { inset: 16px -8px 18px 8px; border-radius: 18px; transform: none; }
+            .atlas-cta { grid-template-columns: 1fr; border-radius: 26px; }
+            .portability-layout.portability-layout--shot { row-gap: 48px; }
+        }
+
+        @media (max-width: 767.98px) {
+            .collection-grid { gap: 24px 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+            .collection-grid > .collection-main { grid-column: 1 / -1; grid-row: auto; }
+            .collection-grid::before,
+            .proof-shot::before { inset: 16px -8px -12px 8px; border-radius: 18px; transform: none; }
+            .shot-frame,
+            .collection-grid .shot-frame,
+            .collection-grid .collection-main .shot-frame,
+            .proof-shot .shot-frame { border-radius: 12px; }
+            .shot-chrome { height: 20px; padding: 0 10px; }
+            .shot-chrome i { width: 6px; height: 6px; }
+            .shot-label { font-size: 10.5px; letter-spacing: 0.1em; }
+            .video-card .video-card-poster { border-radius: 14px; }
+            .video-card .video-card-play { width: 56px; }
+            .video-card .video-card-play::before { font-size: 15px; }
+            .video-card .video-card-badge { right: 10px; bottom: 10px; font-size: 11px; }
+        }
+
+        @media (max-width: 600px) {
+            .hero-grid.hero-grid--video { gap: 0; }
+            .hero-grid--video > .video-card--hero { margin: 4px 0 30px; }
+            .collection-head h2 { font-size: 40px; }
+            .collection-head p { font-size: 16px; }
+            .atlas-cta { padding: 26px 20px 28px; border-radius: 22px; }
+            .atlas-cta-actions .button { width: 100%; }
+            .shot-lightbox-stage { padding: 0 6px; }
+            .shot-lightbox .shot-lightbox-prev,
+            .shot-lightbox .shot-lightbox-next { width: 38px; height: 38px; background: rgba(12, 11, 28, 0.6); }
+            .shot-lightbox .shot-lightbox-prev { left: 10px; }
+            .shot-lightbox .shot-lightbox-next { right: 10px; }
+        }
+
+        @media (max-width: 479.98px) {
+            .collection-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .shot-frame, .shot-frame.is-tilting { transform: none; }
+            .video-card .video-card-poster:hover, .shot-frame:hover { --lift: 0px; }
+            .shot-glint, .shot-frame::after, .video-card .video-card-glint, .video-card .video-card-poster::after { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -1821,11 +2428,25 @@
 
     <main id="main-content">
         <section class="hero" id="top">
-            <div class="wrap hero-grid">
-                <div class="hero-copy">
+            <div class="wrap hero-grid hero-grid--video">
+                <div class="hero-copy hero-lead-block">
                     <span class="eyebrow">Boards that change with the work</span>
                     <h1>Project management software with four connected board views.</h1>
                     <p class="hero-lead">Build the work from cards and properties, then see the same project as a Kanban board, table, gallery, or calendar.</p>
+                </div>
+                <div class="video-card video-card--hero" id="product-video" data-video-card data-youtube-id="DTc42Bi-p4I" data-title="Introducing ProjectBaser" data-duration="1:49">
+                    <button class="video-card-poster" type="button" aria-label="Play video: Introducing ProjectBaser (1:49)">
+                        <picture>
+                            <source type="image/webp" srcset="./media/projectbaser-poster-640.webp 640w, ./media/projectbaser-poster.webp 1280w" sizes="(min-width: 1320px) 640px, (min-width: 981px) 52vw, 100vw">
+                            <img src="./media/projectbaser-poster.jpg" width="1280" height="720" alt="" loading="eager" fetchpriority="high" decoding="async">
+                        </picture>
+                        <span class="video-card-glint" aria-hidden="true"></span>
+                        <span class="video-card-play" aria-hidden="true"></span>
+                        <span class="video-card-badge" aria-hidden="true">1:49</span>
+                    </button>
+                    <p class="video-card-hero-label">Product video · 1:49</p>
+                </div>
+                <div class="hero-copy hero-more">
                     <p class="hero-support">ProjectBaser keeps plans, owners, dates, comments, and decisions connected—without forcing every teammate into the same view.</p>
                     <div class="hero-actions">
                         <a class="button" href="/login">Open ProjectBaser
@@ -1835,8 +2456,45 @@
                     </div>
                     <p class="availability"><i></i><span>Available now · Included in Scale.gg Pro</span></p>
                 </div>
+            </div>
+        </section>
 
-                <div class="hero-visual">
+        <section class="shots-collection" id="inside-projectbaser" aria-labelledby="projectbaser-collection-title">
+            <div class="wrap">
+                <div class="collection-head">
+                    <span class="eyebrow">Inside ProjectBaser</span>
+                    <h2 id="projectbaser-collection-title">See ProjectBaser in action.</h2>
+                    <p>Real screens from the workspace: move cards across the board, open any project from one boards page, and see every due date on the calendar.</p>
+                </div>
+                <div class="collection-grid">
+                    <figure class="shot collection-main" data-shot data-shot-group="projectbaser" data-shot-title="Kanban board" data-shot-text="See every task, owner and deadline on one board.">
+                        <button class="shot-frame" type="button" aria-label="View larger: Kanban board">
+                            <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                            <img src="./media/board-cards-768.webp" srcset="./media/board-cards-768.webp 768w, ./media/board-cards.webp 1536w" sizes="(min-width: 1320px) 900px, (min-width: 768px) 68vw, 100vw" width="1536" height="784" alt="ProjectBaser Product Development board with Backlog, To Do, In Progress, Review and Done lists; cards show colored labels, red overdue and green completed due-date chips, comment and checklist counts, and member avatars." loading="lazy" decoding="async" data-full="./media/board-cards.webp">
+                            <span class="shot-glint" aria-hidden="true"></span>
+                        </button>
+                        <p class="shot-label">Kanban board</p>
+                    </figure>
+                    <figure class="shot" data-shot data-shot-group="projectbaser" data-shot-title="Boards page" data-shot-text="All your projects, organized and a click away.">
+                        <button class="shot-frame" type="button" aria-label="View larger: Boards page">
+                            <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                            <img src="./media/boards-gallery-768.webp" srcset="./media/boards-gallery-768.webp 768w, ./media/boards-gallery.webp 1536w" sizes="(min-width: 1320px) 360px, (min-width: 768px) 27vw, (min-width: 480px) 50vw, 100vw" width="1536" height="784" alt="ProjectBaser Boards page with starred Favorites (Product Development, Marketing Campaigns) and All boards (Customer Onboarding, Sprint Planning, Content Calendar), each color-coded with list and card counts." loading="lazy" decoding="async" data-full="./media/boards-gallery.webp">
+                            <span class="shot-glint" aria-hidden="true"></span>
+                        </button>
+                        <p class="shot-label">Boards page</p>
+                    </figure>
+                    <figure class="shot" data-shot data-shot-group="projectbaser" data-shot-title="Month calendar" data-shot-text="Every deadline and meeting across your boards, in one month view.">
+                        <button class="shot-frame" type="button" aria-label="View larger: Month calendar">
+                            <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                            <img src="./media/month-calendar-768.webp" srcset="./media/month-calendar-768.webp 768w, ./media/month-calendar.webp 1536w" sizes="(min-width: 1320px) 360px, (min-width: 768px) 27vw, (min-width: 480px) 50vw, 100vw" width="1536" height="784" alt="ProjectBaser September 2026 month calendar showing due cards from all boards as colored chips, red overdue items, struck-through completed items, timed meetings and the current day highlighted." loading="lazy" decoding="async" data-full="./media/month-calendar.webp">
+                            <span class="shot-glint" aria-hidden="true"></span>
+                        </button>
+                        <p class="shot-label">Calendar view</p>
+                    </figure>
+                </div>
+                <div class="collection-aside">
+                    <p class="collection-aside-note">One board · many working views</p>
+                    <div class="hero-visual">
                     <div class="app-window" aria-hidden="true">
                         <div class="window-bar">
                             <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -1886,6 +2544,7 @@
                             </div>
                         </div>
                         <div class="floating-note"><small>New comment · just now</small><p><b>@alex</b> The walkthrough notes are on the card. Can you check the launch date?</p></div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -1972,32 +2631,14 @@
                     </ul>
                 </div>
 
-                <div class="card-detail" aria-hidden="true">
-                    <div class="card-detail-bar"><b>Product Launch / Review</b><span>Card details</span></div>
-                    <div class="card-detail-body">
-                        <div class="card-copy">
-                            <small>Project card</small>
-                            <h3>Final product walkthrough</h3>
-                            <p>Walk through the launch path, capture corrections, and confirm that the support team has the final notes.</p>
-                            <div class="properties">
-                                <small>Properties</small>
-                                <div class="property-row"><span>Status</span><b><span class="status-chip coral">Review</span></b></div>
-                                <div class="property-row"><span>Priority</span><b>High</b></div>
-                                <div class="property-row"><span>Owners</span><b>Mia + Jordan</b></div>
-                                <div class="property-row"><span>Due date</span><b>August 18</b></div>
-                                <div class="property-row"><span>Workstream</span><b>Launch readiness</b></div>
-                            </div>
-                        </div>
-                        <aside class="card-side">
-                            <div class="comments">
-                                <small>Comments</small>
-                                <article class="comment"><b>Mia · 10:42</b><p>The walkthrough notes are attached. <span class="mention">@jordan</span> can you check the revised date?</p></article>
-                                <article class="comment"><b>Jordan · 10:48</b><p>Confirmed. I updated the due date and moved this into review.</p></article>
-                                <div class="comment-box">Write a comment or @mention…</div>
-                            </div>
-                        </aside>
-                    </div>
-                </div>
+                <figure class="shot proof-shot" data-shot data-shot-group="projectbaser" data-shot-title="Card detail window" data-shot-text="Everything about a task lives in one card.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Card detail window">
+                        <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <img src="./media/card-window-768.webp" srcset="./media/card-window-768.webp 768w, ./media/card-window.webp 1536w" sizes="(min-width: 1320px) 680px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="ProjectBaser card window for &#39;Design new dashboard layout&#39; showing two members, Design and Priority labels, an overdue Sep 26 due date, a description, an Estimate custom field and a Deliverables checklist at 40 percent." loading="lazy" decoding="async" data-full="./media/card-window.webp">
+                        <span class="shot-glint" aria-hidden="true"></span>
+                    </button>
+                    <p class="shot-label">Card detail window</p>
+                </figure>
             </div>
         </section>
 
@@ -2053,12 +2694,20 @@
         </section>
 
         <section class="section">
-            <div class="wrap portability-layout">
+            <div class="wrap portability-layout portability-layout--shot">
                 <div class="portability-copy">
                     <span class="eyebrow">Keep the board manageable</span>
                     <h2>Organize the active work. Preserve what comes next.</h2>
                     <p>Filter, group, sort, search, archive, export, and use the available backup workflow as the board evolves. The product gives you operational controls; your team decides how and when to use them.</p>
                 </div>
+                <figure class="shot proof-shot proof-shot--mint" data-shot data-shot-group="projectbaser" data-shot-title="Board filter bar" data-shot-text="See only the cards that need you right now.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Board filter bar">
+                        <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <img src="./media/board-filters-768.webp" srcset="./media/board-filters-768.webp 768w, ./media/board-filters.webp 1536w" sizes="(min-width: 1320px) 700px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="ProjectBaser Product Development board with the filter bar in use: search, member, label and Overdue filters with Only my cards turned on, showing 5 of 12 cards across the Backlog, To Do, In Progress, Review and Done lists." loading="lazy" decoding="async" data-full="./media/board-filters.webp">
+                        <span class="shot-glint" aria-hidden="true"></span>
+                    </button>
+                    <p class="shot-label">Board filter bar</p>
+                </figure>
                 <div class="portability-ui">
                     <article class="portability-step"><span class="step-no">01 · FOCUS</span><h3>Filter and sort the active board.</h3><p>Bring the relevant cards and properties into the working view.</p></article>
                     <article class="portability-step"><span class="step-no">02 · ORGANIZE</span><h3>Archive work that no longer needs the foreground.</h3><p>Keep current projects readable while retaining the board workflow.</p></article>
@@ -2081,6 +2730,27 @@
                     <details><summary>Do I have to start every board from scratch?</summary><p>No. Start from a pre-built template, create an empty board, or turn a useful board into a custom template for future work.</p></details>
                     <details><summary>Can I move project data out of the board?</summary><p>ProjectBaser includes export and backup workflows. Review the current options inside the board menu and choose the one that fits your operational need.</p></details>
                     <details><summary>Who controls the project structure and changes?</summary><p>Your team creates and controls the boards, cards, properties, comments, permissions, and templates. ProjectBaser renders the selected views and synchronizes collaborator changes.</p></details>
+                </div>
+            </div>
+        </section>
+
+        <section class="atlas-cta-band" id="feature-atlas" aria-labelledby="atlas-cta-title">
+            <div class="wrap">
+                <div class="atlas-cta">
+                    <div class="atlas-cta-copy">
+                        <p class="atlas-cta-kicker"><span aria-hidden="true"></span>Feature Atlas · ProjectBaser</p>
+                        <h2 id="atlas-cta-title">See every ProjectBaser feature—and <em>what each one gets you.</em></h2>
+                        <p>Browse every ProjectBaser feature, see exactly where it lives in the app, and find the one that moves your work forward today.</p>
+                        <div class="atlas-cta-actions">
+                            <a class="button" href="https://scale.gg/feature-atlas/projectbaser/">Explore the ProjectBaser atlas <span aria-hidden="true">→</span></a>
+                            <small>69 features across 10 areas</small>
+                        </div>
+                    </div>
+                    <ul class="atlas-cta-peek" aria-label="A few features from the Atlas">
+                        <li><a href="https://scale.gg/feature-atlas/projectbaser/boards-gallery/"><small>Boards gallery</small><b>You pick the right board without opening five of them.</b></a></li>
+                        <li><a href="https://scale.gg/feature-atlas/projectbaser/board-cards/"><small>Cards on the board</small><b>Status updates happen by moving the card, not writing a report.</b></a></li>
+                        <li><a href="https://scale.gg/feature-atlas/projectbaser/board-filters/"><small>Board filter bar</small><b>You see only the cards that need you right now.</b></a></li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -2120,6 +2790,7 @@
                     <a href="#cards">Cards</a>
                     <a href="#templates">Templates</a>
                     <a href="#collaboration">Collaboration</a>
+                    <a href="https://scale.gg/feature-atlas/projectbaser/">Feature Atlas</a>
                 </nav>
                 <nav aria-label="Account links">
                     <strong>Account</strong>
@@ -2190,6 +2861,340 @@
                 nextTab.focus();
             });
         });
+    </script>
+    <script>
+        /* Product video modal and screenshot lightbox, ported from the Scale.gg brand site (js/video-card.js, js/shots.js). */
+        /* Click-to-play YouTube video cards. See docs/video-cards.md.
+           Markup: [data-video-card][data-youtube-id][data-title][data-duration]
+                   > button.video-card-poster
+           Nothing loads from YouTube until the poster is clicked. The click opens one
+           shared accessible modal (role=dialog, aria-modal) and creates the
+           youtube-nocookie iframe inside it. Closing removes the iframe, so audio stops,
+           and returns focus to the poster that opened it. */
+        (function () {
+          "use strict";
+          // Guard: run once per page, even if the script tag is included twice.
+          if (window.__scaleVideoCards) return;
+          window.__scaleVideoCards = true;
+        
+          var cards = document.querySelectorAll("[data-video-card]");
+          if (!cards.length) return;
+        
+          var ID_PATTERN = /^[\w-]{11}$/;
+          var modal = null;
+          var panel = null;
+          var frameBox = null;
+          var titleEl = null;
+          var closeBtn = null;
+          var opener = null;
+          var inerted = [];
+          var watch = null;
+          var wrapping = false; // re-entrancy guard for the focus-wrap sentinels
+        
+          function embedUrl(id, muted) {
+            return "https://www.youtube-nocookie.com/embed/" + id +
+              "?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1" +
+              (muted ? "&mute=1" : "") +
+              "&origin=" + encodeURIComponent(location.origin);
+          }
+        
+          function buildModal() {
+            modal = document.createElement("div");
+            modal.className = "vc-modal";
+            modal.hidden = true;
+            modal.innerHTML =
+              '<div class="vc-modal-backdrop" data-vc-close></div>' +
+              '<span class="vc-modal-sentinel" tabindex="0" data-vc-sentinel="start"></span>' +
+              '<div class="vc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="vc-modal-title">' +
+                '<div class="vc-modal-bar"><h2 class="vc-modal-title" id="vc-modal-title"></h2>' +
+                '<button class="vc-modal-close" type="button" aria-label="Close video" data-vc-close><span aria-hidden="true">&times;</span></button></div>' +
+                '<div class="vc-modal-frame"></div>' +
+              "</div>" +
+              '<span class="vc-modal-sentinel" tabindex="0" data-vc-sentinel="end"></span>';
+            panel = modal.querySelector(".vc-modal-panel");
+            frameBox = modal.querySelector(".vc-modal-frame");
+            titleEl = modal.querySelector(".vc-modal-title");
+            closeBtn = modal.querySelector(".vc-modal-close");
+        
+            modal.addEventListener("click", function (event) {
+              if (event.target.closest("[data-vc-close]")) close();
+            });
+            // Focus that leaves the iframe (or Shift+Tab off the close button) lands on a
+            // sentinel and wraps back inside the dialog.
+            modal.querySelectorAll("[data-vc-sentinel]").forEach(function (sentinel) {
+              sentinel.addEventListener("focus", function () {
+                if (wrapping || modal.hidden) return;
+                wrapping = true;
+                try {
+                  var targets = focusables();
+                  var target = sentinel.getAttribute("data-vc-sentinel") === "start" ? targets[targets.length - 1] : targets[0];
+                  if (target && target !== sentinel) target.focus();
+                } finally { wrapping = false; }
+              });
+            });
+            document.body.appendChild(modal);
+          }
+        
+          function focusables() {
+            return Array.prototype.filter.call(panel.querySelectorAll("button, iframe, a[href], [tabindex]:not([tabindex='-1'])"), function (el) {
+              return !el.hidden && el.offsetParent !== null;
+            });
+          }
+        
+          function onKeydown(event) {
+            if (event.key === "Escape" || event.key === "Esc") { event.preventDefault(); close(); return; }
+            if (event.key !== "Tab") return;
+            var targets = focusables();
+            if (!targets.length) { event.preventDefault(); return; }
+            var first = targets[0];
+            var last = targets[targets.length - 1];
+            var active = document.activeElement;
+            if (!panel.contains(active)) { event.preventDefault(); first.focus(); return; }
+            if (event.shiftKey && active === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && active === last) { event.preventDefault(); first.focus(); }
+          }
+        
+          // Autoplay with sound needs the click's user activation. If the browser still
+          // blocks it, YouTube reports the player as unstarted/cued; only then reload
+          // the player muted so playback starts and the visitor can unmute.
+          function watchAutoplay(iframe, id) {
+            var started = false;
+            var timer = null;
+            function listen() {
+              if (iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: "listening", id: "vc", channel: "widget" }), "*");
+            }
+            function onMessage(event) {
+              if (event.source !== iframe.contentWindow || !/youtube(-nocookie)?\.com$/.test(event.origin.replace(/^https?:\/\//, "").replace(/:\d+$/, ""))) return;
+              var data;
+              try { data = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } catch (e) { return; }
+              if (!data) return;
+              var state = data.info && typeof data.info.playerState === "number" ? data.info.playerState : null;
+              if (data.event === "onStateChange" && typeof data.info === "number") state = data.info;
+              if (state === 1 || state === 3) started = true;
+              if (!timer && (data.event === "onReady" || data.event === "initialDelivery" || data.event === "infoDelivery")) {
+                timer = setTimeout(function () {
+                  if (!started && iframe.isConnected && iframe.src.indexOf("mute=1") === -1) iframe.src = embedUrl(id, true);
+                  stop();
+                }, 2500);
+              }
+            }
+            function stop() {
+              window.removeEventListener("message", onMessage);
+              clearTimeout(timer);
+              iframe.removeEventListener("load", listen);
+            }
+            window.addEventListener("message", onMessage);
+            iframe.addEventListener("load", listen);
+            return stop;
+          }
+        
+          function open(card, button) {
+            if (modal && !modal.hidden) return; // already open: never stack or re-enter
+            var id = (card.getAttribute("data-youtube-id") || "").trim();
+            if (!ID_PATTERN.test(id)) return;
+            if (!modal) buildModal();
+            // Stay last in <body> so the dialog stacks above late-loading widgets.
+            if (modal !== document.body.lastElementChild) document.body.appendChild(modal);
+            var title = card.getAttribute("data-title") || "Video";
+            opener = button;
+        
+            titleEl.textContent = title;
+            var iframe = document.createElement("iframe");
+            iframe.src = embedUrl(id, false);
+            iframe.title = title;
+            iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+            iframe.allowFullscreen = true;
+            iframe.referrerPolicy = "strict-origin-when-cross-origin";
+            frameBox.replaceChildren(iframe);
+            watch = watchAutoplay(iframe, id);
+        
+            // Lock page scroll without a layout jump, and take the page out of reach.
+            var gap = window.innerWidth - document.documentElement.clientWidth;
+            if (gap > 0) document.documentElement.style.paddingRight = gap + "px";
+            document.documentElement.classList.add("vc-modal-open");
+            inerted = Array.prototype.filter.call(document.body.children, function (el) {
+              return el !== modal && !el.hasAttribute("inert") && el.tagName !== "SCRIPT";
+            });
+            inerted.forEach(function (el) { el.setAttribute("inert", ""); });
+        
+            modal.hidden = false;
+            document.addEventListener("keydown", onKeydown, true);
+            closeBtn.focus({ preventScroll: true });
+          }
+        
+          function close() {
+            if (!modal || modal.hidden) return;
+            if (watch) { watch(); watch = null; }
+            frameBox.replaceChildren();
+            modal.hidden = true;
+            document.removeEventListener("keydown", onKeydown, true);
+            inerted.forEach(function (el) { el.removeAttribute("inert"); });
+            inerted = [];
+            document.documentElement.classList.remove("vc-modal-open");
+            document.documentElement.style.paddingRight = "";
+            if (opener && opener.isConnected) opener.focus({ preventScroll: true });
+            opener = null;
+          }
+        
+          Array.prototype.forEach.call(cards, function (card) {
+            if (card.__vcReady) return;
+            card.__vcReady = true;
+            var button = card.querySelector(".video-card-poster");
+            if (!button || !ID_PATTERN.test((card.getAttribute("data-youtube-id") || "").trim())) return;
+            if (!button.hasAttribute("aria-label")) {
+              var duration = card.getAttribute("data-duration") || "";
+              button.setAttribute("aria-label", "Play video: " + (card.getAttribute("data-title") || "Video") + (duration ? " (" + duration + ")" : ""));
+            }
+            button.setAttribute("aria-haspopup", "dialog");
+            button.addEventListener("click", function () { open(card, button); });
+          });
+        })();
+
+        /* Shared product screenshot gallery: pointer tilt + glint on desktop,
+           gentle press scale on touch (CSS), and a keyboard-friendly lightbox.
+           Markup: [data-shots] > figure.shot[data-shot] > button.shot-frame > img[data-full]
+           Feature rows (css/feature-rows.css) spread shots across a page: they share one
+           lightbox sequence through data-shot-group="<name>" and, having no figcaption,
+           carry their caption in data-shot-title / data-shot-text. */
+        (function () {
+          "use strict";
+          if (window.__scaleShots) return;
+          window.__scaleShots = true;
+        
+          var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+          var fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+        
+          function bindTilt(frame) {
+            var raf = 0, px = 0.5, py = 0.5;
+            function apply() {
+              raf = 0;
+              frame.style.setProperty("--ry", ((px - 0.5) * 7).toFixed(2) + "deg");
+              frame.style.setProperty("--rx", ((0.5 - py) * 6).toFixed(2) + "deg");
+              frame.style.setProperty("--gx", (px * 100).toFixed(1) + "%");
+              frame.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
+            }
+            frame.addEventListener("pointerenter", function (e) {
+              if (e.pointerType !== "mouse" || reduced.matches || !fine.matches) return;
+              frame.classList.add("is-tilting");
+            });
+            frame.addEventListener("pointermove", function (e) {
+              if (e.pointerType !== "mouse" || reduced.matches || !fine.matches) return;
+              var r = frame.getBoundingClientRect();
+              px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+              py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+              if (!raf) raf = requestAnimationFrame(apply);
+            });
+            frame.addEventListener("pointerleave", function () {
+              if (raf) cancelAnimationFrame(raf), (raf = 0);
+              frame.classList.remove("is-tilting");
+              ["--rx", "--ry", "--gx", "--gy"].forEach(function (p) { frame.style.removeProperty(p); });
+            });
+          }
+        
+          // ---------------------------------------------------------------- lightbox
+          var dialog, stageImg, capTitle, capText, counter, items = [], index = 0, opener = null;
+        
+          function build() {
+            dialog = document.createElement("dialog");
+            dialog.className = "shot-lightbox";
+            dialog.setAttribute("aria-label", "Screenshot viewer");
+            dialog.innerHTML =
+              '<div class="shot-lightbox-bar"><span class="shot-lightbox-count" aria-live="polite"></span>' +
+              '<button type="button" class="shot-lightbox-close" aria-label="Close">✕</button></div>' +
+              '<div class="shot-lightbox-stage"><button type="button" class="shot-lightbox-prev" aria-label="Previous screen">←</button>' +
+              '<img alt="" decoding="async"><button type="button" class="shot-lightbox-next" aria-label="Next screen">→</button></div>' +
+              '<p class="shot-lightbox-caption"><strong></strong><span></span></p>';
+            document.body.appendChild(dialog);
+            stageImg = dialog.querySelector("img");
+            capTitle = dialog.querySelector(".shot-lightbox-caption strong");
+            capText = dialog.querySelector(".shot-lightbox-caption span");
+            counter = dialog.querySelector(".shot-lightbox-count");
+            dialog.querySelector(".shot-lightbox-close").addEventListener("click", close);
+            dialog.querySelector(".shot-lightbox-prev").addEventListener("click", function () { show(index - 1); });
+            dialog.querySelector(".shot-lightbox-next").addEventListener("click", function () { show(index + 1); });
+            dialog.addEventListener("click", function (e) {
+              if (e.target === dialog || e.target.classList.contains("shot-lightbox-stage")) close();
+            });
+            dialog.addEventListener("keydown", function (e) {
+              if (e.key === "ArrowRight") { e.preventDefault(); show(index + 1); }
+              else if (e.key === "ArrowLeft") { e.preventDefault(); show(index - 1); }
+            });
+            dialog.addEventListener("close", function () {
+              document.documentElement.classList.remove("shot-lightbox-open");
+              if (opener && opener.focus) opener.focus({ preventScroll: true });
+            });
+            var startX = null;
+            stageImg.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; }, { passive: true });
+            stageImg.addEventListener("touchend", function (e) {
+              if (startX === null) return;
+              var dx = e.changedTouches[0].clientX - startX;
+              startX = null;
+              if (Math.abs(dx) > 48) show(index + (dx < 0 ? 1 : -1));
+            });
+          }
+        
+          function data(figure) {
+            var img = figure.querySelector("img");
+            var strong = figure.querySelector("figcaption strong");
+            var span = figure.querySelector("figcaption span");
+            return {
+              src: img.getAttribute("data-full") || img.currentSrc || img.src, alt: img.alt,
+              title: strong ? strong.textContent : figure.getAttribute("data-shot-title") || "",
+              text: span ? span.textContent : figure.getAttribute("data-shot-text") || ""
+            };
+          }
+        
+          function show(i) {
+            if (!items.length) return;
+            index = (i + items.length) % items.length;
+            var d = data(items[index]);
+            stageImg.src = d.src;
+            stageImg.alt = d.alt;
+            capTitle.textContent = d.title;
+            capText.textContent = d.text;
+            counter.textContent = (index + 1) + " / " + items.length;
+            // Warm the neighbours so arrowing feels instant.
+            [index + 1, index - 1].forEach(function (n) {
+              var f = items[(n + items.length) % items.length];
+              if (f) { var pre = new Image(); pre.src = data(f).src; }
+            });
+          }
+        
+          function open(figure, trigger) {
+            if (!dialog) build();
+            var name = figure.getAttribute("data-shot-group");
+            var group = figure.closest("[data-shots]");
+            if (name) items = Array.prototype.filter.call(document.querySelectorAll("[data-shot][data-shot-group]"), function (f) { return f.getAttribute("data-shot-group") === name; });
+            else items = group ? Array.prototype.slice.call(group.querySelectorAll("[data-shot]")) : [figure];
+            opener = trigger;
+            if (items.length < 2) dialog.setAttribute("data-single", ""); else dialog.removeAttribute("data-single");
+            show(items.indexOf(figure));
+            document.documentElement.classList.add("shot-lightbox-open");
+            if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+            dialog.querySelector(".shot-lightbox-close").focus({ preventScroll: true });
+          }
+        
+          function close() {
+            if (!dialog) return;
+            if (typeof dialog.close === "function" && dialog.open) dialog.close();
+            else { dialog.removeAttribute("open"); dialog.dispatchEvent(new Event("close")); }
+          }
+        
+          function init(root) {
+            (root || document).querySelectorAll("[data-shot]").forEach(function (figure) {
+              if (figure.__shotReady) return;
+              figure.__shotReady = true;
+              var frame = figure.querySelector(".shot-frame");
+              if (!frame) return;
+              bindTilt(frame);
+              frame.addEventListener("click", function () { open(figure, frame); });
+            });
+          }
+        
+          window.ScaleShots = { init: init };
+          if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { init(); });
+          else init();
+        })();
     </script>
 </body>
 </html>
