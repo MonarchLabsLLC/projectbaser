@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProjectBaser — Project Management Across Four Board Views</title>
-    <meta name="description" content="Plan project work with cards and properties, then switch the same board between Kanban, Table, Gallery, and Calendar views.">
+    <title>ProjectBaser — Boards for the Work That Follows the Sale</title>
+    <meta name="description" content="Delivery boards with an assistant: won deals become onboarding cards, the assistant answers what is overdue, and every change waits for your approval.">
     <link rel="canonical" href="https://projectbaser.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="ProjectBaser">
-    <meta property="og:title" content="ProjectBaser — Project Management Across Four Board Views">
-    <meta property="og:description" content="Plan project work with cards and properties, then switch the same board between Kanban, Table, Gallery, and Calendar views.">
+    <meta property="og:title" content="ProjectBaser — Boards for the Work That Follows the Sale">
+    <meta property="og:description" content="Delivery boards with an assistant: won deals become onboarding cards, the assistant answers what is overdue, and every change waits for your approval.">
     <meta property="og:url" content="https://projectbaser.com/">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="ProjectBaser — Project Management Across Four Board Views">
-    <meta name="twitter:description" content="Plan project work with cards and properties, then switch the same board between Kanban, Table, Gallery, and Calendar views.">
+    <meta name="twitter:title" content="ProjectBaser — Boards for the Work That Follows the Sale">
+    <meta name="twitter:description" content="Delivery boards with an assistant: won deals become onboarding cards, the assistant answers what is overdue, and every change waits for your approval.">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
     <link rel="preload" href="./fonts/geist-sans-variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./fonts/geist-mono-variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -25,7 +25,7 @@
             "url": "https://projectbaser.com/",
             "applicationCategory": "BusinessApplication",
             "operatingSystem": "Web",
-            "description": "A project workspace with boards, cards, custom properties, four board views, templates, sharing, comments, mentions, export, and backup workflows."
+            "description": "Delivery boards, cards, a month calendar, and a projects dashboard, with visual workflows and an assistant whose changes wait for your approval. Part of PipeLeads Suite."
         }
     </script>
     <script type="application/ld+json">
@@ -33,7 +33,7 @@
             "@context": "https://schema.org",
             "@type": "VideoObject",
             "name": "Introducing ProjectBaser",
-            "description": "A 1:49 tour of ProjectBaser: boards, cards, views, collaboration, and templates.",
+            "description": "A 1:49 tour of ProjectBaser: boards, cards, the calendar, and the work that follows the sale.",
             "thumbnailUrl": ["https://projectbaser.com/static/landing/media/projectbaser-poster.jpg"],
             "uploadDate": "2026-09-28",
             "duration": "PT1M49S",
@@ -2386,6 +2386,31 @@
             .video-card .video-card-poster:hover, .shot-frame:hover { --lift: 0px; }
             .shot-glint, .shot-frame::after, .video-card .video-card-glint, .video-card .video-card-poster::after { display: none; }
         }
+
+        /* ProjectBaser 2.0 rewrite: mirrored rows and the plan badge. */
+        .card-workspace.card-workspace--flip { grid-template-columns: 1.17fr 0.83fr; }
+        .card-workspace > *,
+        .portability-layout--shot > * { min-width: 0; }
+        .section { overflow-x: clip; }
+        .card-workspace--flip > div > p { color: var(--muted); font-size: 18px; }
+        .plan-badge {
+            display: inline-block;
+            margin-left: 4px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #1b1928;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 650;
+            letter-spacing: 0.08em;
+        }
+        @media (max-width: 980px) {
+            .card-workspace.card-workspace--flip { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .card-workspace--flip > div > p { font-size: 16px; }
+            .card-workspace h2 { overflow-wrap: break-word; }
+        }
     </style>
 </head>
 <body>
@@ -2402,15 +2427,15 @@
             </div>
 
             <nav class="desktop-nav" aria-label="Primary navigation">
-                <a href="#views">Views</a>
+                <a href="#handoff">Hand-off</a>
+                <a href="#assistant">Assistant</a>
                 <a href="#cards">Cards</a>
-                <a href="#templates">Templates</a>
-                <a href="#collaboration">Collaboration</a>
+                <a href="#calendar">Calendar</a>
             </nav>
 
             <div class="header-actions">
-                <a class="login-link" href="/login">Sign in</a>
-                <a class="button button-small" href="/login">Open ProjectBaser
+                <a class="login-link" href="https://go.pipeleads.ai/pm/boards">Sign in</a>
+                <a class="button button-small" href="https://go.pipeleads.ai/pm/boards">Open ProjectBaser
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                 </a>
                 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span></button>
@@ -2418,11 +2443,11 @@
         </div>
 
         <nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" hidden>
-            <a href="#views">Views</a>
+            <a href="#handoff">Hand-off</a>
+            <a href="#assistant">Assistant</a>
             <a href="#cards">Cards</a>
-            <a href="#templates">Templates</a>
-            <a href="#collaboration">Collaboration</a>
-            <a href="/login">Sign in</a>
+            <a href="#calendar">Calendar</a>
+            <a href="https://go.pipeleads.ai/pm/boards">Sign in</a>
         </nav>
     </header>
 
@@ -2430,9 +2455,9 @@
         <section class="hero" id="top">
             <div class="wrap hero-grid hero-grid--video">
                 <div class="hero-copy hero-lead-block">
-                    <span class="eyebrow">Boards that change with the work</span>
-                    <h1>Project management software with four connected board views.</h1>
-                    <p class="hero-lead">Build the work from cards and properties, then see the same project as a Kanban board, table, gallery, or calendar.</p>
+                    <span class="eyebrow">Delivery boards with an assistant</span>
+                    <h1>Boards for the work that follows the sale.</h1>
+                    <p class="hero-lead">Sales closes the deal. The onboarding card lands on the board by itself, and its owner already knows.</p>
                 </div>
                 <div class="video-card video-card--hero" id="product-video" data-video-card data-youtube-id="DTc42Bi-p4I" data-title="Introducing ProjectBaser" data-duration="1:49">
                     <button class="video-card-poster" type="button" aria-label="Play video: Introducing ProjectBaser (1:49)">
@@ -2447,14 +2472,14 @@
                     <p class="video-card-hero-label">Product video · 1:49</p>
                 </div>
                 <div class="hero-copy hero-more">
-                    <p class="hero-support">ProjectBaser keeps plans, owners, dates, comments, and decisions connected—without forcing every teammate into the same view.</p>
+                    <p class="hero-support">Ask what’s overdue and get the cards back, linked. Describe a hand-off in one sentence and review the draft before it runs. Nothing changes until you approve it.</p>
                     <div class="hero-actions">
-                        <a class="button" href="/login">Open ProjectBaser
+                        <a class="button" href="https://go.pipeleads.ai/pm/boards">Open ProjectBaser
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </a>
-                        <a class="button button-secondary" href="#views">See all four views</a>
+                        <a class="button button-secondary" href="#handoff">See the hand-off</a>
                     </div>
-                    <p class="availability"><i></i><span>Available now · Included in Scale.gg Pro</span></p>
+                    <p class="availability"><i></i><span>Available now · Included in Scale.gg Pro · Part of PipeLeads Suite</span></p>
                 </div>
             </div>
         </section>
@@ -2464,16 +2489,16 @@
                 <div class="collection-head">
                     <span class="eyebrow">Inside ProjectBaser</span>
                     <h2 id="projectbaser-collection-title">See ProjectBaser in action.</h2>
-                    <p>Real screens from the workspace: move cards across the board, open any project from one boards page, and see every due date on the calendar.</p>
+                    <p>Real screens from the workspace: move cards across the board, open any project from one boards page, and see every due date and meeting on the calendar.</p>
                 </div>
                 <div class="collection-grid">
-                    <figure class="shot collection-main" data-shot data-shot-group="projectbaser" data-shot-title="Kanban board" data-shot-text="See every task, owner and deadline on one board.">
-                        <button class="shot-frame" type="button" aria-label="View larger: Kanban board">
+                    <figure class="shot collection-main" data-shot data-shot-group="projectbaser" data-shot-title="Board" data-shot-text="Every task, owner and deadline on one board.">
+                        <button class="shot-frame" type="button" aria-label="View larger: Board">
                             <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
                             <img src="./media/board-cards-768.webp" srcset="./media/board-cards-768.webp 768w, ./media/board-cards.webp 1536w" sizes="(min-width: 1320px) 900px, (min-width: 768px) 68vw, 100vw" width="1536" height="784" alt="ProjectBaser Product Development board with Backlog, To Do, In Progress, Review and Done lists; cards show colored labels, red overdue and green completed due-date chips, comment and checklist counts, and member avatars." loading="lazy" decoding="async" data-full="./media/board-cards.webp">
                             <span class="shot-glint" aria-hidden="true"></span>
                         </button>
-                        <p class="shot-label">Kanban board</p>
+                        <p class="shot-label">Board</p>
                     </figure>
                     <figure class="shot" data-shot data-shot-group="projectbaser" data-shot-title="Boards page" data-shot-text="All your projects, organized and a click away.">
                         <button class="shot-frame" type="button" aria-label="View larger: Boards page">
@@ -2489,61 +2514,61 @@
                             <img src="./media/month-calendar-768.webp" srcset="./media/month-calendar-768.webp 768w, ./media/month-calendar.webp 1536w" sizes="(min-width: 1320px) 360px, (min-width: 768px) 27vw, (min-width: 480px) 50vw, 100vw" width="1536" height="784" alt="ProjectBaser September 2026 month calendar showing due cards from all boards as colored chips, red overdue items, struck-through completed items, timed meetings and the current day highlighted." loading="lazy" decoding="async" data-full="./media/month-calendar.webp">
                             <span class="shot-glint" aria-hidden="true"></span>
                         </button>
-                        <p class="shot-label">Calendar view</p>
+                        <p class="shot-label">Month calendar</p>
                     </figure>
                 </div>
                 <div class="collection-aside">
-                    <p class="collection-aside-note">One board · many working views</p>
+                    <p class="collection-aside-note">One board · one assistant · your approval</p>
                     <div class="hero-visual">
                     <div class="app-window" aria-hidden="true">
                         <div class="window-bar">
                             <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                            <strong>ProjectBaser · Product Launch</strong>
-                            <span class="window-state">Live board</span>
+                            <strong>ProjectBaser · Customer Onboarding</strong>
+                            <span class="window-state">Board</span>
                         </div>
                         <div class="app-shell">
                             <aside class="app-sidebar" aria-hidden="true">
                                 <b><i></i>ProjectBaser</b>
                                 <span class="side-label">Boards</span>
-                                <span class="side-item active"><i></i>Product Launch</span>
+                                <span class="side-item active"><i></i>Customer Onboarding</span>
+                                <span class="side-item"><i></i>Product Development</span>
                                 <span class="side-item"><i></i>Content Calendar</span>
-                                <span class="side-item"><i></i>Company Goals</span>
-                                <span class="side-label">Views</span>
-                                <span class="side-item active"><i></i>Kanban</span>
-                                <span class="side-item"><i></i>Table</span>
-                                <span class="side-item"><i></i>Gallery</span>
+                                <span class="side-label">Workspace</span>
+                                <span class="side-item active"><i></i>Boards</span>
                                 <span class="side-item"><i></i>Calendar</span>
+                                <span class="side-item"><i></i>Dashboard</span>
+                                <span class="side-item"><i></i>Workflows</span>
                             </aside>
                             <div class="app-main">
                                 <div class="app-main-head">
-                                    <div><small>Launch workspace</small><h2>Product Launch</h2></div>
-                                    <span class="share-pill">Share</span>
+                                    <div><small>Client delivery</small><h2>Customer Onboarding</h2></div>
+                                    <span class="share-pill">Agent</span>
                                 </div>
-                                <div class="app-tools"><b>Launch board</b><span>Properties</span><span>Filter</span><span>Sort</span><span>+ New</span></div>
+                                <div class="app-tools"><b>Onboarding board</b><span>Members</span><span>Labels</span><span>Due</span><span>+ Card</span></div>
                                 <div class="kanban">
                                     <div class="kanban-column">
-                                        <div class="column-head"><span>Not started</span><span>3</span></div>
-                                        <article class="task-card"><b>Confirm launch checklist</b><div class="task-meta"><span class="priority">High</span><span class="avatars"><i>MF</i></span></div></article>
-                                        <article class="task-card"><b>Review support docs</b><div class="task-meta"><span class="priority">Medium</span><span class="avatars"><i>AK</i></span></div></article>
+                                        <div class="column-head"><span>To Do</span><span>3</span></div>
+                                        <article class="task-card"><b>Onboard Acme Corp</b><div class="task-meta"><span class="priority">Due Fri</span><span class="avatars"><i>MF</i></span></div></article>
+                                        <article class="task-card"><b>Collect brand assets</b><div class="task-meta"><span class="priority">2/5</span><span class="avatars"><i>AK</i></span></div></article>
                                     </div>
                                     <div class="kanban-column">
-                                        <div class="column-head"><span>In progress</span><span>2</span></div>
-                                        <article class="task-card"><b>Build campaign pages</b><div class="task-meta"><span class="priority">High</span><span class="avatars"><i>JL</i><i>MF</i></span></div></article>
-                                        <article class="task-card"><b>Prepare launch email</b><div class="task-meta"><span class="priority">Medium</span><span class="avatars"><i>AK</i></span></div></article>
+                                        <div class="column-head"><span>In Progress</span><span>2</span></div>
+                                        <article class="task-card"><b>Kickoff call</b><div class="task-meta"><span class="priority">Today</span><span class="avatars"><i>JL</i><i>MF</i></span></div></article>
+                                        <article class="task-card"><b>Set up account</b><div class="task-meta"><span class="priority">Overdue</span><span class="avatars"><i>AK</i></span></div></article>
                                     </div>
                                     <div class="kanban-column">
                                         <div class="column-head"><span>Review</span><span>1</span></div>
-                                        <article class="task-card"><b>Final product walkthrough</b><div class="task-meta"><span class="priority">Review</span><span class="avatars"><i>MF</i><i>JL</i></span></div></article>
+                                        <article class="task-card"><b>Welcome pack sign-off</b><div class="task-meta"><span class="priority">Review</span><span class="avatars"><i>MF</i><i>JL</i></span></div></article>
                                     </div>
                                     <div class="kanban-column">
-                                        <div class="column-head"><span>Complete</span><span>2</span></div>
-                                        <article class="task-card"><b>Approve launch brief</b><div class="task-meta"><span class="priority">Done</span><span class="avatars"><i>AK</i></span></div></article>
-                                        <article class="task-card"><b>Set milestone dates</b><div class="task-meta"><span class="priority">Done</span><span class="avatars"><i>MF</i></span></div></article>
+                                        <div class="column-head"><span>Done</span><span>2</span></div>
+                                        <article class="task-card"><b>Signed contract filed</b><div class="task-meta"><span class="priority">Done</span><span class="avatars"><i>AK</i></span></div></article>
+                                        <article class="task-card"><b>Owner assigned</b><div class="task-meta"><span class="priority">Done</span><span class="avatars"><i>MF</i></span></div></article>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="floating-note"><small>New comment · just now</small><p><b>@alex</b> The walkthrough notes are on the card. Can you check the launch date?</p></div>
+                        <div class="floating-note"><small>Agent · waiting for you</small><p><b>Move “Kickoff call” to Review?</b> Approve and it moves. Reject and nothing changes.</p></div>
                     </div>
                     </div>
                 </div>
@@ -2552,68 +2577,57 @@
 
         <section class="proof-strip" aria-label="Verified ProjectBaser product facts">
             <div class="wrap proof-grid">
-                <div class="proof-item"><strong>4</strong><span>views over the same board data</span></div>
-                <div class="proof-item"><strong>1</strong><span>card detail for properties and discussion</span></div>
-                <div class="proof-item"><strong>Live</strong><span>updates when collaborators make changes</span></div>
+                <div class="proof-item"><strong>27</strong><span>triggers that can start a workflow</span></div>
+                <div class="proof-item"><strong>0</strong><span>changes the assistant makes without your approval</span></div>
+                <div class="proof-item"><strong>0</strong><span>records written by a test run</span></div>
                 <div class="proof-item"><strong>Pro</strong><span>included in the Scale.gg membership</span></div>
             </div>
         </section>
 
-        <section class="section" id="views">
-            <div class="wrap">
-                <div class="section-head">
-                    <div><span class="eyebrow">Same project · different working views</span><h2>Change the view. Keep the work connected.</h2></div>
-                    <p>Kanban makes movement visible. Table brings properties forward. Gallery gives visual work room to breathe. Calendar puts dated cards on the schedule. The cards stay tied to one board.</p>
+        <section class="section" id="handoff">
+            <div class="wrap card-workspace">
+                <div>
+                    <span class="eyebrow">The hand-off runs itself</span>
+                    <h2>Won deals open their own onboarding card.</h2>
+                    <p>Mark a deal won in PipeLeads CRM and the workflow tells the owner and drops an onboarding card into Backlog. You build it on a visual canvas, from 27 triggers and steps like Create card, Move card, Assign owner, Send email, Send a text, If/else and Wait.</p>
+                    <ul class="check-list">
+                        <li><i>✓</i><span>“Card due date approaching” warns the right person days before a deadline slips.</span></li>
+                        <li><i>✓</i><span>Test run walks every step with writes switched off, so you see the result before anyone gets a message.</span></li>
+                        <li><i>✓</i><span>Runs show each step, and a failed run retries from the step that failed. A workflow that keeps failing pauses itself and tells you.</span></li>
+                    </ul>
                 </div>
 
-                <div class="view-lab">
-                    <div class="view-tabs" role="tablist" aria-label="ProjectBaser view examples">
-                        <button class="view-tab" type="button" role="tab" aria-selected="true" aria-controls="kanban-panel" id="kanban-tab" data-panel="kanban-panel">Kanban</button>
-                        <button class="view-tab" type="button" role="tab" aria-selected="false" aria-controls="table-panel" id="table-tab" data-panel="table-panel">Table</button>
-                        <button class="view-tab" type="button" role="tab" aria-selected="false" aria-controls="gallery-panel" id="gallery-tab" data-panel="gallery-panel">Gallery</button>
-                        <button class="view-tab" type="button" role="tab" aria-selected="false" aria-controls="calendar-panel" id="calendar-tab" data-panel="calendar-panel">Calendar</button>
-                    </div>
+                <figure class="shot proof-shot" data-shot data-shot-group="projectbaser" data-shot-title="Workflow builder" data-shot-text="Deal won, notify the owner, create the onboarding card.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Workflow builder">
+                        <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <img src="./media/card-workflows-768.webp" srcset="./media/card-workflows-768.webp 768w, ./media/card-workflows.webp 1536w" sizes="(min-width: 1320px) 680px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="ProjectBaser workflow builder showing the workflow &#39;Hand a won deal to the delivery board&#39;: a Deal won trigger, a Send notification step for the record owner, and a Create card step in Backlog, with Runs and Test run buttons and a Problems panel reporting no problems." loading="lazy" decoding="async" data-full="./media/card-workflows.webp">
+                        <span class="shot-glint" aria-hidden="true"></span>
+                    </button>
+                    <p class="shot-label">Workflow builder</p>
+                </figure>
+            </div>
+        </section>
 
-                    <div class="view-panel active" role="tabpanel" id="kanban-panel" aria-labelledby="kanban-tab">
-                        <div class="board-topline"><div><h3>Launch board</h3><p>Grouped by status · 8 cards</p></div><div class="board-controls"><span>Properties</span><span>Filter</span><span>Sort</span><span>Search</span></div></div>
-                        <div class="lab-kanban">
-                            <div class="lab-column"><b><span>Not started</span><i></i></b><div class="lab-card"><strong>Confirm launch checklist</strong><span>High</span></div><div class="lab-card"><strong>Review support docs</strong><span>Medium</span></div></div>
-                            <div class="lab-column"><b><span>In progress</span><i></i></b><div class="lab-card"><strong>Build campaign pages</strong><span>High</span></div><div class="lab-card"><strong>Prepare launch email</strong><span>Medium</span></div></div>
-                            <div class="lab-column"><b><span>Review</span><i></i></b><div class="lab-card"><strong>Final product walkthrough</strong><span>Review</span></div></div>
-                            <div class="lab-column"><b><span>Complete</span><i></i></b><div class="lab-card"><strong>Approve launch brief</strong><span>Done</span></div><div class="lab-card"><strong>Set milestone dates</strong><span>Done</span></div></div>
-                        </div>
-                    </div>
+        <section class="section section-lilac" id="assistant">
+            <div class="wrap card-workspace card-workspace--flip">
+                <figure class="shot proof-shot proof-shot--mint" data-shot data-shot-group="projectbaser" data-shot-title="Approvals" data-shot-text="A drafted workflow waits for you, switched off.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Approvals">
+                        <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <img src="./media/agent-approvals-768.webp" srcset="./media/agent-approvals-768.webp 768w, ./media/agent-approvals.webp 1536w" sizes="(min-width: 1320px) 680px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="PipeLeads Suite agent Approvals tab with a proposed change titled Draft workflow: Proposal follow-up by text and task, listing its trigger and three steps, the status Draft, switched off, an expiry of 27 minutes, and Reject and Approve buttons." loading="lazy" decoding="async" data-full="./media/agent-approvals.webp">
+                        <span class="shot-glint" aria-hidden="true"></span>
+                    </button>
+                    <p class="shot-label">Approvals</p>
+                </figure>
 
-                    <div class="view-panel" role="tabpanel" id="table-panel" aria-labelledby="table-tab" hidden>
-                        <div class="board-topline"><div><h3>Launch board</h3><p>Table view · the same 8 cards</p></div><div class="board-controls"><span>Properties</span><span>Filter</span><span>Sort</span><span>Search</span></div></div>
-                        <table class="table-view">
-                            <thead><tr><th>Card</th><th>Status</th><th>Priority</th><th>Owner</th><th>Due date</th></tr></thead>
-                            <tbody>
-                                <tr><td>Confirm launch checklist</td><td><span class="status-chip">Not started</span></td><td>High</td><td>Mia</td><td>Aug 14</td></tr>
-                                <tr><td>Build campaign pages</td><td><span class="status-chip yellow">In progress</span></td><td>High</td><td>Jordan</td><td>Aug 16</td></tr>
-                                <tr><td>Final product walkthrough</td><td><span class="status-chip coral">Review</span></td><td>Review</td><td>Mia + Jordan</td><td>Aug 18</td></tr>
-                                <tr><td>Approve launch brief</td><td><span class="status-chip green">Complete</span></td><td>Done</td><td>Alex</td><td>Aug 10</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="view-panel" role="tabpanel" id="gallery-panel" aria-labelledby="gallery-tab" hidden>
-                        <div class="board-topline"><div><h3>Launch board</h3><p>Gallery view · the same card details</p></div><div class="board-controls"><span>Properties</span><span>Filter</span><span>Sort</span><span>Search</span></div></div>
-                        <div class="gallery-view">
-                            <article class="gallery-card"><div class="gallery-art"><div>A</div></div><div class="gallery-copy"><b>Campaign pages</b><span>In progress · Jordan</span></div></article>
-                            <article class="gallery-card"><div class="gallery-art"><div>B</div></div><div class="gallery-copy"><b>Product walkthrough</b><span>Review · Mia + Jordan</span></div></article>
-                            <article class="gallery-card"><div class="gallery-art"><div>C</div></div><div class="gallery-copy"><b>Launch brief</b><span>Complete · Alex</span></div></article>
-                        </div>
-                    </div>
-
-                    <div class="view-panel" role="tabpanel" id="calendar-panel" aria-labelledby="calendar-tab" hidden>
-                        <div class="board-topline"><div><h3>August launch schedule</h3><p>Calendar view · dated cards from the same board</p></div><div class="board-controls"><span>Today</span><span>Month</span><span>Filter</span></div></div>
-                        <div class="calendar-grid">
-                            <div class="calendar-day">Sun</div><div class="calendar-day">Mon</div><div class="calendar-day">Tue</div><div class="calendar-day">Wed</div><div class="calendar-day">Thu</div><div class="calendar-day">Fri</div><div class="calendar-day">Sat</div>
-                            <div class="calendar-date">10<span class="calendar-event mint">Launch brief</span></div><div class="calendar-date">11</div><div class="calendar-date">12</div><div class="calendar-date">13</div><div class="calendar-date">14<span class="calendar-event">Checklist</span></div><div class="calendar-date">15</div><div class="calendar-date">16<span class="calendar-event coral">Campaign pages</span></div>
-                            <div class="calendar-date">17</div><div class="calendar-date">18<span class="calendar-event">Walkthrough</span></div><div class="calendar-date">19</div><div class="calendar-date">20</div><div class="calendar-date">21</div><div class="calendar-date">22</div><div class="calendar-date">23</div>
-                        </div>
-                    </div>
+                <div>
+                    <span class="eyebrow">Ask your boards <b class="plan-badge">Pro Max</b></span>
+                    <h2>Ask what’s late. Approve what changes.</h2>
+                    <p>Ask “What’s overdue on my boards?” and the assistant answers with the cards, each one linked. Ask it to create a card, move one, or leave a comment, and it prepares the change as an approval that shows exactly what will happen.</p>
+                    <ul class="check-list">
+                        <li><i>✓</i><span>Describe a workflow in one sentence. It arrives as a switched-off draft you open in the builder.</span></li>
+                        <li><i>✓</i><span>Approve or reject each change. Anything you ignore expires after 30 minutes.</span></li>
+                        <li><i>✓</i><span>Open it from the Agent button beside the card you’re on, or from Claude Code, Codex, or Cursor.</span></li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -2621,84 +2635,57 @@
         <section class="section section-soft" id="cards">
             <div class="wrap card-workspace">
                 <div>
-                    <span class="eyebrow">The card carries the context</span>
+                    <span class="eyebrow">The card carries the job</span>
                     <h2>Turn “what’s the status?” into a card everyone can read.</h2>
-                    <p>A card can hold the title, description, owner, status, priority, dates, tags, attachments, and comments that explain the work—not just its place in a column.</p>
+                    <p>Members, labels, a due date, the description, checklists with a progress bar, your own custom fields, files, and comments with replies. The card history shows who changed what.</p>
                     <ul class="check-list">
-                        <li><i>✓</i><span>Create the properties that fit the project instead of inheriting a rigid schema.</span></li>
-                        <li><i>✓</i><span>Move cards between columns or update the same status from another view.</span></li>
-                        <li><i>✓</i><span>Keep comments and mentions attached to the item they are discussing.</span></li>
+                        <li><i>✓</i><span>Drag files onto the card. The paperclip count shows on the board.</span></li>
+                        <li><i>✓</i><span>Book the meeting from the card in CalendarBug, send your booking link, or log one agreed elsewhere.</span></li>
+                        <li><i>✓</i><span>Define 12 kinds of custom field once and mark the ones every card needs.</span></li>
                     </ul>
                 </div>
 
-                <figure class="shot proof-shot" data-shot data-shot-group="projectbaser" data-shot-title="Card detail window" data-shot-text="Everything about a task lives in one card.">
-                    <button class="shot-frame" type="button" aria-label="View larger: Card detail window">
+                <figure class="shot proof-shot" data-shot data-shot-group="projectbaser" data-shot-title="Card window" data-shot-text="Everything about a task lives in one card.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Card window">
                         <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
                         <img src="./media/card-window-768.webp" srcset="./media/card-window-768.webp 768w, ./media/card-window.webp 1536w" sizes="(min-width: 1320px) 680px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="ProjectBaser card window for &#39;Design new dashboard layout&#39; showing two members, Design and Priority labels, an overdue Sep 26 due date, a description, an Estimate custom field and a Deliverables checklist at 40 percent." loading="lazy" decoding="async" data-full="./media/card-window.webp">
                         <span class="shot-glint" aria-hidden="true"></span>
                     </button>
-                    <p class="shot-label">Card detail window</p>
+                    <p class="shot-label">Card window</p>
                 </figure>
             </div>
         </section>
 
-        <section class="section" id="templates">
-            <div class="wrap templates-layout">
-                <div class="templates-intro">
-                    <span class="eyebrow">A useful starting structure</span>
-                    <h2>Start from a template. Make the workflow yours.</h2>
-                    <p>Use a pre-built board for familiar work or create an empty board and define the properties, views, groups, and filters the project needs. Save a working board as a custom template when the pattern is worth repeating.</p>
-                    <a class="button button-secondary" href="/login">Browse in ProjectBaser
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-                    </a>
-                </div>
+        <section class="section" id="calendar">
+            <div class="wrap card-workspace card-workspace--flip">
+                <figure class="shot proof-shot proof-shot--mint" data-shot data-shot-group="projectbaser" data-shot-title="Projects dashboard" data-shot-text="Where every board stands, and what is overdue.">
+                    <button class="shot-frame" type="button" aria-label="View larger: Projects dashboard">
+                        <span class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <img src="./media/projects-dashboard-768.webp" srcset="./media/projects-dashboard-768.webp 768w, ./media/projects-dashboard.webp 1536w" sizes="(min-width: 1320px) 680px, (min-width: 981px) 52vw, 100vw" width="1536" height="784" alt="ProjectBaser Projects dashboard with a Created against completed chart for the last 30 days and a Work by board panel showing overdue counts and percent done for Product Development, Sprint Planning, Marketing Campaigns, Content Calendar and Customer Onboarding." loading="lazy" decoding="async" data-full="./media/projects-dashboard.webp">
+                        <span class="shot-glint" aria-hidden="true"></span>
+                    </button>
+                    <p class="shot-label">Projects dashboard</p>
+                </figure>
 
-                <div class="templates-grid" aria-label="Examples of ProjectBaser templates">
-                    <article class="template-card"><span>Planning</span><h3>Project Tasks</h3><p>Track a project from the work queue through completion.</p></article>
-                    <article class="template-card"><span>Content</span><h3>Content Calendar</h3><p>Organize ideas, production stages, owners, and dates.</p></article>
-                    <article class="template-card"><span>Goals</span><h3>Company Goals & OKRs</h3><p>Connect objectives to the work and progress behind them.</p></article>
-                    <article class="template-card"><span>Product</span><h3>Roadmap</h3><p>Group planned work and keep the supporting cards close.</p></article>
-                    <article class="template-card"><span>Meetings</span><h3>Meeting Agenda</h3><p>Prepare topics and carry decisions into follow-up cards.</p></article>
-                    <article class="template-card"><span>Custom</span><h3>Your working pattern</h3><p>Turn a board your team already uses into a reusable template.</p></article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section section-lilac" id="collaboration">
-            <div class="wrap collab-layout">
-                <div class="share-workspace" aria-hidden="true">
-                    <div class="share-card">
-                        <div class="share-card-head"><h3>Share “Product Launch”</h3><span>Board access</span></div>
-                        <div class="permission-row"><i>MF</i><div><b>Mia Flores</b><small>mia@example.com</small></div><span>Admin</span></div>
-                        <div class="permission-row"><i>JL</i><div><b>Jordan Lee</b><small>jordan@example.com</small></div><span>Edit</span></div>
-                        <div class="permission-row"><i>AK</i><div><b>Alex Kim</b><small>alex@example.com</small></div><span>View only</span></div>
-                    </div>
-                    <div class="activity-card">
-                        <div class="activity-item"><small>10:48</small><b>Due date updated</b></div>
-                        <div class="activity-item"><small>10:49</small><b>Card moved to Review</b></div>
-                        <div class="activity-item"><small>10:50</small><b>New comment added</b></div>
-                    </div>
-                </div>
-
-                <div class="collab-copy">
-                    <span class="eyebrow">Share the board · control the access</span>
-                    <h2>Bring people into the work without giving everyone the same permissions.</h2>
-                    <p>Share boards with view-only, edit, or admin access. Use comments and @mentions to put the conversation on the card. Real-time updates surface changes to the people working alongside you.</p>
+                <div>
+                    <span class="eyebrow">The month and the load</span>
+                    <h2>Know what’s late before the client asks.</h2>
+                    <p>The calendar puts every due card and booked meeting on one month. The Projects dashboard shows what’s overdue, what’s due this week, what nobody owns, and who is carrying too much.</p>
                     <ul class="check-list">
-                        <li><i>✓</i><span>Board-level sharing for the people who need the plan.</span></li>
-                        <li><i>✓</i><span>Comments and mentions next to the work they reference.</span></li>
-                        <li><i>✓</i><span>Live card movements and updates without a manual refresh.</span></li>
+                        <li><i>✓</i><span>Each warning opens the board or calendar already filtered to the cards behind it.</span></li>
+                        <li><i>✓</i><span>Cycle time and throughput show whether delivery is speeding up or backing up.</span></li>
+                        <li><i>✓</i><span>On a phone, the month turns into a day-by-day list.</span></li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section class="section">
+        <section class="section section-soft">
             <div class="wrap portability-layout portability-layout--shot">
                 <div class="portability-copy">
-                    <span class="eyebrow">Keep the board manageable</span>
-                    <h2>Organize the active work. Preserve what comes next.</h2>
-                    <p>Filter, group, sort, search, archive, export, and use the available backup workflow as the board evolves. The product gives you operational controls; your team decides how and when to use them.</p>
+                    <span class="eyebrow">Only the cards that need you</span>
+                    <h2>Cut the board down to your cards.</h2>
+                    <p>Filter by text, member, label, or due date, or flip on Only my cards. The filter lives in the link, so a teammate opens the same view you’re looking at.</p>
                 </div>
                 <figure class="shot proof-shot proof-shot--mint" data-shot data-shot-group="projectbaser" data-shot-title="Board filter bar" data-shot-text="See only the cards that need you right now.">
                     <button class="shot-frame" type="button" aria-label="View larger: Board filter bar">
@@ -2709,9 +2696,31 @@
                     <p class="shot-label">Board filter bar</p>
                 </figure>
                 <div class="portability-ui">
-                    <article class="portability-step"><span class="step-no">01 · FOCUS</span><h3>Filter and sort the active board.</h3><p>Bring the relevant cards and properties into the working view.</p></article>
-                    <article class="portability-step"><span class="step-no">02 · ORGANIZE</span><h3>Archive work that no longer needs the foreground.</h3><p>Keep current projects readable while retaining the board workflow.</p></article>
-                    <article class="portability-step"><span class="step-no">03 · PRESERVE</span><h3>Use export and backup when the work calls for it.</h3><p>Carry project data into the available operational workflow.</p></article>
+                    <article class="portability-step"><span class="step-no">01 · FOCUS</span><h3>See overdue, due soon, or yours.</h3><p>The board shows the few cards that need a decision today.</p></article>
+                    <article class="portability-step"><span class="step-no">02 · SEND</span><h3>Send the filtered link.</h3><p>Your teammate lands on the same cut of the board, no setup.</p></article>
+                    <article class="portability-step"><span class="step-no">03 · TIDY</span><h3>Archive what’s finished.</h3><p>Archived cards wait in their own drawer and restore in one click.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="everyday">
+            <div class="wrap templates-layout">
+                <div class="templates-intro">
+                    <span class="eyebrow">The rest of the day</span>
+                    <h2>Your team, your boards, one place.</h2>
+                    <p>Sign in with your ScalePlus account and work in your own workspace or a teammate’s. Switch between ProjectBaser and PipeLeads CRM without leaving the page.</p>
+                    <a class="button button-secondary" href="https://go.pipeleads.ai/pm/boards">Open your boards
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                    </a>
+                </div>
+
+                <div class="templates-grid" aria-label="More of what ProjectBaser does">
+                    <article class="template-card"><span>Teams</span><h3>Roles that fit</h3><p>Members, Admins, and Owners. Only an Admin can delete a board.</p></article>
+                    <article class="template-card"><span>Notifications</span><h3>Hear what matters</h3><p>Assigned, finished, or commented on. Never your own actions, and quiet hours when you want them.</p></article>
+                    <article class="template-card"><span>Boards</span><h3>Start in seconds</h3><p>A new board arrives with Backlog, To Do, In Progress, Review, and Done.</p></article>
+                    <article class="template-card"><span>Keyboard</span><h3>Jump anywhere</h3><p>Press Cmd or Ctrl + K to find any board or card by name.</p></article>
+                    <article class="template-card"><span>Messages</span><h3>Email and text from a workflow</h3><p>Send from your templates through MailBaser, and let a reply start the next step.</p></article>
+                    <article class="template-card"><span>Version 1.0</span><h3>Bring your old boards</h3><p>Import boards, cards, checklists, and comments. Run it again and nothing duplicates.</p></article>
                 </div>
             </div>
         </section>
@@ -2721,15 +2730,15 @@
                 <div class="faq-head">
                     <span class="eyebrow">Straight answers</span>
                     <h2>What ProjectBaser does.</h2>
-                    <p>The current board workflow, stated plainly: what changes between views, what collaborators can do, and which decisions remain with your team.</p>
+                    <p>The new ProjectBaser, stated plainly: what the assistant can touch, what workflows do, and what happens to your old boards.</p>
                 </div>
                 <div class="faq-list">
-                    <details open><summary>Do the four views create separate copies of a project?</summary><p>No. Kanban, Table, Gallery, and Calendar are different views over the same board data. Update a card and the underlying item remains connected across the views.</p></details>
-                    <details><summary>Can I add fields that match my workflow?</summary><p>Yes. Cards support custom properties alongside common project details such as status, priority, assignee, tags, and dates.</p></details>
-                    <details><summary>Can teammates discuss work inside the board?</summary><p>Yes. Add comments to cards, use @mentions, and share the board with view-only, edit, or admin access according to the collaboration needed.</p></details>
-                    <details><summary>Do I have to start every board from scratch?</summary><p>No. Start from a pre-built template, create an empty board, or turn a useful board into a custom template for future work.</p></details>
-                    <details><summary>Can I move project data out of the board?</summary><p>ProjectBaser includes export and backup workflows. Review the current options inside the board menu and choose the one that fits your operational need.</p></details>
-                    <details><summary>Who controls the project structure and changes?</summary><p>Your team creates and controls the boards, cards, properties, comments, permissions, and templates. ProjectBaser renders the selected views and synchronizes collaborator changes.</p></details>
+                    <details open><summary>Where does the new ProjectBaser live?</summary><p>Inside PipeLeads Suite at go.pipeleads.ai, next to PipeLeads CRM. Sign in with your ScalePlus account and open Boards. The Sign in and Open ProjectBaser buttons on this page take you there.</p></details>
+                    <details><summary>Can the assistant change my boards on its own?</summary><p>No. It reads boards and cards and answers with links. Every card it would create, move, or comment on becomes an approval you accept or reject, and an approval expires after 30 minutes. The assistant needs the Pro Max plan.</p></details>
+                    <details><summary>Do workflows run by themselves?</summary><p>Only after a person switches them on. A workflow the assistant drafts arrives switched off. Test run shows what every step would do with writes turned off, and each run keeps a step-by-step history.</p></details>
+                    <details><summary>What can a card hold?</summary><p>Members, labels, a due date, a description, checklists, custom fields, file attachments, comments with replies, booked meetings, and a history of changes.</p></details>
+                    <details><summary>What happens to my ProjectBaser 1.0 boards?</summary><p>An owner or admin can import them. Boards, cards in order with due dates, descriptions, checklists, comments, and labels come across. Saved table and gallery views, board templates, and files stay behind.</p></details>
+                    <details><summary>Can I use it from Claude Code, Codex, or Cursor?</summary><p>Yes. Through ClickCampaigns Superpowers, your coding assistant can list boards, read cards, find due work, and prepare card changes. The same approval step applies.</p></details>
                 </div>
             </div>
         </section>
@@ -2762,7 +2771,7 @@
                     <h2>One membership. A focused app for every marketing job.</h2>
                 </div>
                 <div class="closing-copy">
-                    <p>ProjectBaser is included in Scale.gg—the AI-powered marketing suite for planning, creating, publishing, selling, and supporting your business.</p>
+                    <p>ProjectBaser is included in Scale.gg—the AI-powered marketing suite for planning, creating, publishing, selling, and supporting your business. Check it out at scale.gg today.</p>
                     <div class="closing-actions">
                         <a class="button" href="https://scale.gg/">Explore Scale.gg
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -2782,20 +2791,20 @@
                         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
                         <span><strong>ProjectBaser</strong></span>
                     </a>
-                    <p>Flexible boards, connected cards, alternative views, and practical collaboration controls for project work.</p>
+                    <p>Boards, cards, and a calendar for the work that follows the sale, with workflows and an assistant that waits for your approval.</p>
                 </div>
                 <nav aria-label="Product links">
                     <strong>Product</strong>
-                    <a href="#views">Views</a>
+                    <a href="#handoff">Hand-off</a>
+                    <a href="#assistant">Assistant</a>
                     <a href="#cards">Cards</a>
-                    <a href="#templates">Templates</a>
-                    <a href="#collaboration">Collaboration</a>
+                    <a href="#calendar">Calendar</a>
                     <a href="https://scale.gg/feature-atlas/projectbaser/">Feature Atlas</a>
                 </nav>
                 <nav aria-label="Account links">
                     <strong>Account</strong>
-                    <a href="/login">Sign in</a>
-                    <a href="/login">Open ProjectBaser</a>
+                    <a href="https://go.pipeleads.ai/pm/boards">Sign in</a>
+                    <a href="https://go.pipeleads.ai/pm/boards">Open ProjectBaser</a>
                     <a href="https://scale.gg/projectbaser/">Scale.gg overview</a>
                 </nav>
                 <nav aria-label="Scale.gg family links">
@@ -2806,7 +2815,7 @@
                     <a href="https://app.scaleplus.gg/">Sign in</a>
                 </nav>
             </div>
-            <div class="footer-bottom"><span>© 2026 ProjectBaser — A Scale.gg product</span><span>Boards and cards stay under your team’s control.</span></div>
+            <div class="footer-bottom"><span>© 2026 ProjectBaser — A Scale.gg product</span><span>Every change the assistant proposes waits for a person.</span></div>
         </div>
     </footer>
 
