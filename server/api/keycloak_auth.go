@@ -1,10 +1,16 @@
 package api
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/mattermost/focalboard/server/model"
@@ -120,7 +126,12 @@ func (a *API) handleKeycloakTokenLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get or create user via app layer
-	sessionToken, user, teamID, err := a.app.KeycloakLogin(claims.Sub, claims.Email, claims.GivenName, claims.FamilyName)
+	// The token above is decoded, not verified, so a changed email is adopted
+	// only after Keycloak's userinfo endpoint confirms it for this token.
+	confirmEmail := func() (string, bool, error) {
+		return a.confirmKeycloakEmail(r.Context(), token, claims.Sub)
+	}
+	sessionToken, user, teamID, err := a.app.KeycloakLogin(claims.Sub, claims.Email, claims.GivenName, claims.FamilyName, confirmEmail)
 	if err != nil {
 		a.logger.Error("Keycloak login failed", mlog.Err(err))
 		a.errorResponse(w, r, model.NewErrUnauthorized("login failed"))
@@ -233,4 +244,51 @@ func (a *API) handleKeycloakUserInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonBytesResponse(w, http.StatusOK, jsonBytes)
+}
+
+var keycloakUserInfoClient = &http.Client{Timeout: 5 * time.Second}
+
+type keycloakUserInfo struct {
+	Sub           string `json:"sub"`
+	Email         string `json:"email"`
+	EmailVerified bool   `json:"email_verified"`
+}
+
+// confirmKeycloakEmail asks the configured Keycloak realm which email it
+// vouches for on this access token.
+func (a *API) confirmKeycloakEmail(ctx context.Context, token, expectedSub string) (string, bool, error) {
+	cfg := a.app.GetConfig()
+	if cfg == nil || cfg.KeycloakBaseURL == "" || cfg.KeycloakRealm == "" {
+		return "", false, errors.New("keycloak is not configured")
+	}
+	userInfoURL := strings.TrimRight(cfg.KeycloakBaseURL, "/") + "/realms/" + url.PathEscape(cfg.KeycloakRealm) +
+		"/protocol/openid-connect/userinfo"
+	return fetchKeycloakUserInfoEmail(ctx, keycloakUserInfoClient, userInfoURL, token, expectedSub)
+}
+
+func fetchKeycloakUserInfoEmail(ctx context.Context, client *http.Client, userInfoURL, token, expectedSub string) (string, bool, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, userInfoURL, nil)
+	if err != nil {
+		return "", false, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", false, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", false, fmt.Errorf("keycloak userinfo returned status %d", resp.StatusCode)
+	}
+
+	var info keycloakUserInfo
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<16)).Decode(&info); err != nil {
+		return "", false, err
+	}
+	if info.Sub == "" || info.Sub != expectedSub {
+		return "", false, errors.New("keycloak userinfo subject does not match the token")
+	}
+	return info.Email, info.EmailVerified, nil
 }

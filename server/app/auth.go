@@ -280,8 +280,8 @@ func (a *App) ChangePassword(userID, oldPassword, newPassword string) error {
 // It looks up the user by keycloak_sub_id first, then by email.
 // If the user doesn't exist, it creates a new user with the provided information.
 // Returns the session token, user object, team ID, and any error.
-func (a *App) KeycloakLogin(keycloakSubID, email, firstName, lastName string) (string, *model.User, string, error) {
-	user, err := a.GetOrCreateKeycloakUser(keycloakSubID, email, firstName, lastName)
+func (a *App) KeycloakLogin(keycloakSubID, email, firstName, lastName string, confirmEmail KeycloakEmailConfirmer) (string, *model.User, string, error) {
+	user, err := a.GetOrCreateKeycloakUser(keycloakSubID, email, firstName, lastName, confirmEmail)
 	if err != nil {
 		a.metrics.IncrementLoginFailCount(1)
 		return "", nil, "", errors.Wrap(err, "failed to get or create keycloak user")
@@ -327,14 +327,14 @@ func (a *App) KeycloakLogin(keycloakSubID, email, firstName, lastName string) (s
 // or creates a new user if one doesn't exist.
 // This follows the requirement that subsequent authentication should be based on
 // the Keycloak sub ID, so if the email changes in Keycloak, the user can still be authenticated.
-func (a *App) GetOrCreateKeycloakUser(keycloakSubID, email, firstName, lastName string) (*model.User, error) {
+func (a *App) GetOrCreateKeycloakUser(keycloakSubID, email, firstName, lastName string, confirmEmail KeycloakEmailConfirmer) (*model.User, error) {
 	// First, try to find user by Keycloak subject ID (preferred for returning users)
 	user, err := a.store.GetUserByKeycloakSubID(keycloakSubID)
 	if err == nil && user != nil {
 		a.logger.Debug("Found user by Keycloak sub ID",
 			mlog.String("userID", user.ID),
 			mlog.String("keycloakSubID", keycloakSubID))
-		return user, nil
+		return a.syncKeycloakEmail(user, email, confirmEmail), nil
 	}
 
 	// If not found by sub ID, try to find by email (for first-time Keycloak login)
@@ -429,4 +429,71 @@ func (a *App) GetOrCreateKeycloakUser(keycloakSubID, email, firstName, lastName 
 		mlog.String("keycloakSubID", keycloakSubID))
 
 	return createdUser, nil
+}
+
+// KeycloakEmailConfirmer asks Keycloak itself which email it vouches for on
+// this sign-in and whether that email is verified.
+type KeycloakEmailConfirmer func() (email string, verified bool, err error)
+
+func normalizeKeycloakEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
+}
+
+// syncKeycloakEmail keeps a returning member's stored email in step with their
+// Scale.gg account. The user was matched by Keycloak sub; accounts are never
+// linked or merged by email here. The new address is adopted only when Keycloak
+// confirms it is verified and no other user holds it, and nothing in this
+// step can block the sign-in.
+func (a *App) syncKeycloakEmail(user *model.User, tokenEmail string, confirmEmail KeycloakEmailConfirmer) *model.User {
+	next := normalizeKeycloakEmail(tokenEmail)
+	if next == "" || next == normalizeKeycloakEmail(user.Email) {
+		return user
+	}
+	if confirmEmail == nil {
+		return user
+	}
+
+	confirmed, verified, err := confirmEmail()
+	if err != nil {
+		a.logger.Warn("Email sync skipped: Keycloak could not confirm the new address",
+			mlog.String("userID", user.ID), mlog.Err(err))
+		return user
+	}
+	if !verified || normalizeKeycloakEmail(confirmed) != next {
+		a.logger.Info("Email sync skipped: new address is not verified in Keycloak",
+			mlog.String("userID", user.ID))
+		return user
+	}
+
+	owner, err := a.store.GetUserByEmail(next)
+	if err != nil && !model.IsErrNotFound(err) {
+		a.logger.Error("Email sync failed; keeping stored email",
+			mlog.String("userID", user.ID), mlog.Err(err))
+		return user
+	}
+	if err == nil && owner != nil && owner.ID != user.ID {
+		a.logger.Warn("Email sync skipped: new address already belongs to another user",
+			mlog.String("userID", user.ID), mlog.String("conflictingUserID", owner.ID))
+		return user
+	}
+
+	updated := *user
+	updated.Email = next
+	// Usernames generated from the old email follow it, unless that would
+	// collide with another user's username.
+	if normalizeKeycloakEmail(user.Username) == normalizeKeycloakEmail(user.Email) {
+		holder, holderErr := a.store.GetUserByUsername(next)
+		if model.IsErrNotFound(holderErr) || (holderErr == nil && holder != nil && holder.ID == user.ID) {
+			updated.Username = next
+		}
+	}
+
+	saved, err := a.store.UpdateUser(&updated)
+	if err != nil {
+		a.logger.Warn("Email sync failed; keeping stored email",
+			mlog.String("userID", user.ID), mlog.Err(err))
+		return user
+	}
+	a.logger.Info("Updated stored email from Keycloak", mlog.String("userID", user.ID))
+	return saved
 }
