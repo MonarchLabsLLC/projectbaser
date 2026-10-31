@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,8 +20,15 @@ import (
 
 const requiredKeycloakRole = "app_projectbaser"
 
-// KeycloakTokenClaims represents the decoded JWT claims from Keycloak
+// KeycloakTokenClaims represents the verified JWT claims from Keycloak
 type KeycloakTokenClaims struct {
+	Issuer            string                 `json:"iss"`
+	Audience          keycloakAudience       `json:"aud"`
+	AuthorizedParty   string                 `json:"azp"`
+	Type              string                 `json:"typ"`
+	ExpiresAt         *float64               `json:"exp"`
+	NotBefore         *float64               `json:"nbf"`
+	IssuedAt          *float64               `json:"iat"`
 	Sub               string                 `json:"sub"`
 	Email             string                 `json:"email"`
 	EmailVerified     bool                   `json:"email_verified"`
@@ -94,11 +100,21 @@ func (a *API) handleKeycloakTokenLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Decode JWT token (without signature verification as per requirements)
-	claims, err := a.decodeJWTPayload(token)
+	cfg := a.app.GetConfig()
+	if cfg == nil {
+		a.errorResponse(w, r, model.NewErrUnauthorized("invalid token"))
+		return
+	}
+	verifier, err := keycloakVerifierFor(cfg.KeycloakBaseURL, cfg.KeycloakRealm, cfg.KeycloakClientID)
 	if err != nil {
-		a.logger.Error("Failed to decode JWT token", mlog.Err(err))
-		a.errorResponse(w, r, model.NewErrUnauthorized("invalid token format"))
+		a.logger.Error("Keycloak token login is not configured", mlog.Err(err))
+		a.errorResponse(w, r, model.NewErrUnauthorized("invalid token"))
+		return
+	}
+	claims, err := verifier.Verify(r.Context(), token)
+	if err != nil {
+		a.logger.Warn("Rejected Keycloak token", mlog.Err(err))
+		a.errorResponse(w, r, model.NewErrUnauthorized("invalid token"))
 		return
 	}
 
@@ -125,9 +141,8 @@ func (a *API) handleKeycloakTokenLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get or create user via app layer
-	// The token above is decoded, not verified, so a changed email is adopted
-	// only after Keycloak's userinfo endpoint confirms it for this token.
+	// Get or create user via app layer. A changed email is adopted only after
+	// Keycloak's userinfo endpoint also confirms it for this token.
 	confirmEmail := func() (string, bool, error) {
 		return a.confirmKeycloakEmail(r.Context(), token, claims.Sub)
 	}
@@ -154,43 +169,6 @@ func (a *API) handleKeycloakTokenLogin(w http.ResponseWriter, r *http.Request) {
 	jsonBytesResponse(w, http.StatusOK, jsonBytes)
 	auditRec.AddMeta("userID", user.ID)
 	auditRec.Success()
-}
-
-// decodeJWTPayload decodes the JWT payload without verifying the signature
-// This is intentional as per requirements - we trust Keycloak issued the token
-func (a *API) decodeJWTPayload(token string) (*KeycloakTokenClaims, error) {
-	// JWT structure: header.payload.signature
-	parts := strings.Split(token, ".")
-	if len(parts) != 3 {
-		return nil, model.NewErrBadRequest("invalid JWT format")
-	}
-
-	// Decode the payload (second part)
-	payload := parts[1]
-
-	// Add padding if necessary for base64 decoding
-	switch len(payload) % 4 {
-	case 2:
-		payload += "=="
-	case 3:
-		payload += "="
-	}
-
-	decoded, err := base64.URLEncoding.DecodeString(payload)
-	if err != nil {
-		// Try standard base64 if URL encoding fails
-		decoded, err = base64.StdEncoding.DecodeString(payload)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var claims KeycloakTokenClaims
-	if err := json.Unmarshal(decoded, &claims); err != nil {
-		return nil, err
-	}
-
-	return &claims, nil
 }
 
 // hasRequiredRole checks if the user has the required role in the token
