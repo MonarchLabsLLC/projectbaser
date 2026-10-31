@@ -78,3 +78,18 @@ func (mr *MockStoreMockRecorder) GetMemberForBoard(arg0, arg1 interface{}) *gomo
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMemberForBoard", reflect.TypeOf((*MockStore)(nil).GetMemberForBoard), arg0, arg1)
 }
+
+// GetUserTeamRole mocks base method.
+func (m *MockStore) GetUserTeamRole(arg0, arg1 string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserTeamRole", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserTeamRole indicates an expected call of GetUserTeamRole.
+func (mr *MockStoreMockRecorder) GetUserTeamRole(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTeamRole", reflect.TypeOf((*MockStore)(nil).GetUserTeamRole), arg0, arg1)
+}
